@@ -15,10 +15,10 @@ import com.fhce.control.dao.biometricoDao;
 import com.fhce.control.model.biometricoModel;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/biometrico") //develop
-@RequestMapping("biometrico") //production
-@CrossOrigin("urlcliente/") //debelop Fhce
-//@CrossOrigin("http://192.168.31.45:8081/") debelop house
+@RequestMapping("fhce-egovf-scc/biometrico") //develop
+//@RequestMapping("biometrico") //production
+//@CrossOrigin("urlcliente/") //debelop Fhce
+@CrossOrigin("http://192.168.31.45:8081/") //debelop house
 public class biometricoController {
 	
 	@Autowired

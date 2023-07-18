@@ -17,10 +17,10 @@ import com.fhce.control.model.biometricoModel;
 import com.fhce.control.model.obsModel;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/obs") //develop 
-@RequestMapping("obs") //production
-@CrossOrigin("urlcliente/")//debelop Fhce
-//@CrossOrigin("http://192.168.31.45:8081/") debelop house
+@RequestMapping("fhce-egovf-scc/obs") //develop 
+//@RequestMapping("obs") //production
+//@CrossOrigin("urlcliente/")//debelop Fhce
+@CrossOrigin("http://192.168.31.45:8081/") //debelop house
 public class obsController {
 	
 	@Autowired 

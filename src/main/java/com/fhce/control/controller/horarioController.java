@@ -17,10 +17,10 @@ import com.fhce.control.model.biometricoModel;
 import com.fhce.control.model.horarioModel;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/horario") //develop
-@RequestMapping("horario") //production
-@CrossOrigin("urlcliente/")//debelop Fhce
-//@CrossOrigin("http://192.168.31.45:8081/") debelop house
+@RequestMapping("fhce-egovf-scc/horario") //develop
+//@RequestMapping("horario") //production
+//@CrossOrigin("urlcliente/")//debelop Fhce
+@CrossOrigin("http://192.168.31.45:8081/") //debelop house
 public class horarioController {
 	
 	@Autowired
