@@ -297,6 +297,7 @@ public class marcadoController {
 		marcadoTotalModel aux;
 		for(int i=0;i<listaBiometrico.size();i++) {
 			ingreso=true;
+			// se verifica que el usuario no ingrese al ranking 2 veces 
 			for(int k=0;k<listaTotal.size();k++) {
 				if(listaTotal.get(k).getCif().longValue()== listaBiometrico.get(i).get_03cif().longValue()) {
 					ingreso=false;
@@ -304,7 +305,7 @@ public class marcadoController {
 				}
 			}
 			if(ingreso) {
-				if(listaBiometrico.get(i).get_03cif().longValue()>0 && listaBiometrico.get(i).get_07id_tipo()==tipo) {
+				if(listaBiometrico.get(i).get_03cif().longValue()>0 && listaBiometrico.get(i).get_07id_tipo()==tipo && listaBiometrico.get(i).get_04estado()==0) {
 					List<horarioModel>idhorarioLista=horarioDao.getListaId(listaBiometrico.get(i).get_03cif());
 					List<formatoReporteModel>listaReporte=getReporte(listaBiometrico.get(i).get_03cif(),idhorarioLista.get(idhorarioLista.size()-1).getId(),gestion,mes);
 					List<formatoReporteModel>reporteFinal= new ArrayList<formatoReporteModel>();

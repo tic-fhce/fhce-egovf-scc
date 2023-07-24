@@ -52,4 +52,8 @@ public class biometricoController {
 		this.biometricoDao.save(biometricoModel);
 		
 	}
+	@PutMapping("/estadoBiometrico")
+	public void estadoBiometrico(@RequestBody biometricoModel biometricoModel) {
+		this.biometricoDao.save(biometricoModel);
+	}
 }
