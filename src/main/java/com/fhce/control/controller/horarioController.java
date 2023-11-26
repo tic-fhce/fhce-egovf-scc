@@ -19,8 +19,8 @@ import com.fhce.control.model.horarioModel;
 @RestController
 @RequestMapping("fhce-egovf-scc/horario") //develop
 //@RequestMapping("horario") //production
-//@CrossOrigin("urlcliente/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8081/") //debelop house
+//@CrossOrigin("https://svfhce.umsa.bo/")//debelop Fhce
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class horarioController {
 	
 	@Autowired

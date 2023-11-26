@@ -1,6 +1,8 @@
 package com.fhce.control.controller;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,8 +19,8 @@ import com.fhce.control.model.biometricoModel;
 @RestController
 @RequestMapping("fhce-egovf-scc/biometrico") //develop
 //@RequestMapping("biometrico") //production
-//@CrossOrigin("urlcliente/") //debelop Fhce
-@CrossOrigin("http://192.168.31.45:8081/") //debelop house
+//@CrossOrigin("https://svfhce.umsa.bo/") //debelop Fhce
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class biometricoController {
 	
 	@Autowired
@@ -40,6 +42,29 @@ public class biometricoController {
 	public List<biometricoModel> listarEgovf(){
 		
 		return this.biometricoDao.getCifUno();
+	}
+	
+	@GetMapping("/listarBiometrico")
+	public List<biometricoModel>listarBiometrico(){
+		List<biometricoModel> aux= this.biometricoDao.getCifUno();
+		List<biometricoModel> biometrico = new ArrayList<biometricoModel>();
+		List<Long>cif=new ArrayList<Long>();
+		for(int i=0;i<aux.size();i++) {
+			cif.add(aux.get(i).get_03cif());
+		}
+		
+		cif=cif.stream().distinct().collect(Collectors.toList());
+		
+		for(int i=0;i<cif.size();i++) {
+			for(int j=0;j<aux.size();j++) {
+				if(cif.get(i).longValue()==aux.get(j).get_03cif().longValue()) {
+					biometrico.add(aux.get(j));
+					break;
+				}
+			}
+		}
+		
+		return(biometrico);
 	}
 	
 	@GetMapping("/getPerfil")
