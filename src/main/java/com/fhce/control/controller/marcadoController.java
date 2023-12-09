@@ -30,10 +30,10 @@ import com.fhce.control.model.ultimoModel;
 
 
 @RestController
-@RequestMapping("fhce-egovf-scc/marcado") //develop
-//@RequestMapping("marcado") //production
-//@CrossOrigin("https://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+//@RequestMapping("fhce-egovf-scc/marcado") //develop
+@RequestMapping("marcado") //production
+@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
+//@CrossOrigin("http://172.16.114.157:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
@@ -89,6 +89,7 @@ public class marcadoController {
 				j++;
 			}
 		}
+		
 		return reporteFinal;
 	}
 	
@@ -111,6 +112,8 @@ public class marcadoController {
 	}
 	
 	public List<formatoReporteModel> getReporte(Long cif,Long id_horario,int gestion,int mes){
+		
+		
 		
 		final Locale español = new Locale("es","MX");
 		String valuedia="";
@@ -148,8 +151,7 @@ public class marcadoController {
 				listaobserModel.add(new obserModel(obsModel.get(i).getId(),obsModel.get(i).get_02uidobs(),fecha,obsModel.get(i).get_09detalle(),obsModel.get(i).get_11tipo(),obsModel.get(i).get_12hora(),obsModel.get(i).get_13h(),obsModel.get(i).get_14m()));
 			}
 		}
-		
-		
+				
 		// Ordenamos la Lista Despues de Crearlo
 		int menor=0;
 		int mayor=0;
@@ -169,7 +171,10 @@ public class marcadoController {
 		}
 		//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		
-		// Ordenamos la Lista Despues de Crearlo
+		
+		
+		
+		// Ordenamos la Lista Despues de Crearlo la Lista de Observaciones
 		menor=0;
 		mayor=0;
 		obserModel auxObserModel;
@@ -187,6 +192,7 @@ public class marcadoController {
 			}
 		}	
 		
+		
 		//#####################################################################
 		//se crea el calendario con los dias corespondientes para el formato del reporte
 		if(mes>9)
@@ -194,6 +200,41 @@ public class marcadoController {
 		else
 			valuemes="0"+Integer.toString(mes);
 		
+		for ( LocalDate day = LocalDate.parse(gestion+"-"+valuemes+"-01"); day.getMonthValue() < mes+1 ; day = day.plusDays(1)) {
+            if(day.getYear()==gestion) {
+				if(day.getDayOfMonth()>9)
+	            	dia=Integer.toString(day.getDayOfMonth());
+	            else
+	            	dia="0"+Integer.toString(day.getDayOfMonth());
+	            
+	            fecha=day.getYear()+"-"+valuemes+"-"+dia;
+	            List<obserModel>listaux=new ArrayList<obserModel>();
+	            for(int i=0;i<listaobserModel.size();i++) {
+	            	if(listaobserModel.get(i).getFecha().equals(fecha))
+	            	{
+	            		obserAux=new obserModel("");
+	            		obserAux.setId(listaobserModel.get(i).getId());
+	            		obserAux.setFecha(listaobserModel.get(i).getFecha());
+	            		obserAux.setTipo(listaobserModel.get(i).getTipo());
+	            		obserAux.setUidobs(listaobserModel.get(i).getUidobs());
+	            		obserAux.setDetalle(listaobserModel.get(i).getDetalle());
+	            		obserAux.setHora(listaobserModel.get(i).getHora());
+	            		obserAux.setH(listaobserModel.get(i).getH());
+	            		obserAux.setM(listaobserModel.get(i).getM());
+	            		listaux.add(obserAux);
+	            	}
+	            }
+	            
+	            reporte= new formatoReporteModel(0,day.getDayOfWeek().getDisplayName(TextStyle.FULL, español),day.getDayOfMonth(),day.getMonthValue(),fecha,true,listaux);
+	            listaReporte.add(reporte);
+            }
+            else
+            	break;
+        }
+				
+		
+		
+		/*
         for ( LocalDate day = LocalDate.parse(gestion+"-"+valuemes+"-01"); day.getMonthValue() < mes+1 ; day = day.plusDays(1)) {
             if(day.getDayOfMonth()>9)
             	dia=Integer.toString(day.getDayOfMonth());
@@ -221,6 +262,8 @@ public class marcadoController {
             reporte= new formatoReporteModel(0,day.getDayOfWeek().getDisplayName(TextStyle.FULL, español),day.getDayOfMonth(),day.getMonthValue(),fecha,true,listaux);
             listaReporte.add(reporte);
         }
+        */
+
         //#####################################################################
 		
 		//colocamos el marcado en el reporte
@@ -277,7 +320,7 @@ public class marcadoController {
         	listaReporte.get(i).reporte();
         }
         
-        return listaReporte;
+        return listaReporte; 
 	}
 	@GetMapping("/reporteTotal")
 	public List<marcadoTotalModel> getReporteTotal(@RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes, @RequestParam (value="tipo") int tipo) {

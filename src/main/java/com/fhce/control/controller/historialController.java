@@ -12,10 +12,10 @@ import com.fhce.control.dao.historialDao;
 import com.fhce.control.model.historialModel;
 
 @RestController
-@RequestMapping("fhce-egovf-scc/historial") //develop
-//@RequestMapping("historial") //production
-//@CrossOrigin("https://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+//@RequestMapping("fhce-egovf-scc/historial") //develop
+@RequestMapping("historial") //production
+@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
+//@CrossOrigin("http://172.16.114.157:8080/") //debelop house
 public class historialController {
 	
 	@Autowired
