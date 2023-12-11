@@ -17,10 +17,10 @@ import com.fhce.control.dao.biometricoDao;
 import com.fhce.control.model.biometricoModel;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/biometrico") //develop
-@RequestMapping("biometrico") //production
-@CrossOrigin("http://svfhce.umsa.bo/") //debelop Fhce
-//@CrossOrigin("http://172.16.114.157:8080/") //debelop house
+@RequestMapping("fhce-egovf-scc/biometrico") //develop
+//@RequestMapping("biometrico") //production
+//@CrossOrigin("http://svfhce.umsa.bo/") //debelop Fhce
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class biometricoController {
 	
 	@Autowired
@@ -67,6 +67,31 @@ public class biometricoController {
 		return(biometrico);
 	}
 	
+	@GetMapping("/listarBiometricoTipo")
+	public List<biometricoModel>listarBiometricoTipo(@RequestParam (value="tipo") Long tipo){
+		
+		List<biometricoModel> aux = this.biometricoDao.getAll(tipo);//Seleccionamos todos los usuarios del biometrico que pertenescan al tipo 
+		List<biometricoModel> biometrico = new ArrayList<biometricoModel>();
+		
+		// creamos una lista solo para cif y eliminamos los repetidos
+		List<Long>cif=new ArrayList<Long>(); 
+		for(int i=0;i<aux.size();i++) {
+			cif.add(aux.get(i).get_03cif());
+		}
+		cif=cif.stream().distinct().collect(Collectors.toList());
+		
+		//llenamos la Lista biometrico solo con los datos cif's unicos
+		for(int i=0;i<cif.size();i++) {
+			for(int j=0;j<aux.size();j++) {
+				if(cif.get(i).longValue()==aux.get(j).get_03cif().longValue()) {
+					biometrico.add(aux.get(j));
+					break;
+				}
+			}
+		}
+		
+		return(biometrico); // devolvemos la lista
+	}
 	@GetMapping("/getPerfil")
 	public List<biometricoModel> getPerfil(@RequestParam (value="cif") Long cif){
 		return this.biometricoDao.getPerfil(cif);

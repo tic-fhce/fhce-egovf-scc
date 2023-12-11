@@ -8,13 +8,13 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 @SpringBootApplication
-public class ControlApplication extends SpringBootServletInitializer{
+public class ControlApplication /*extends SpringBootServletInitializer*/{
 
-	
+	/*
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
 		return builder.sources(ControlApplication.class);
-	}/* para produccion*/
+	}*//* para produccion*/
 	
 	
 	public static void main(String[] args) {

@@ -19,9 +19,9 @@
 		<java.version>1.8</java.version>
 	</properties>
 	
-	<!-- Descomentar para generar WAR-->
+	<!-- Descomentar para generar WAR
 	<packaging>war</packaging>
-	
+	-->
 	
 	<dependencies>
 		<dependency>
@@ -55,13 +55,13 @@
 			<scope>test</scope>
 		</dependency>
 		
-		<!-- Deswcomentar para generar WAR -->
+		<!-- Deswcomentar para generar WAR 
 		<dependency>
 		    <groupId>org.springframework.boot</groupId>
 		    <artifactId>spring-boot-starter-tomcat</artifactId>
 		    <scope>provided</scope>
 		</dependency>
-		
+		-->
 		
 		
 	</dependencies>

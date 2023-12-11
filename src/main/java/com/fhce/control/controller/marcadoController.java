@@ -30,10 +30,10 @@ import com.fhce.control.model.ultimoModel;
 
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/marcado") //develop
-@RequestMapping("marcado") //production
-@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-//@CrossOrigin("http://172.16.114.157:8080/") //debelop house
+@RequestMapping("fhce-egovf-scc/marcado") //develop
+//@RequestMapping("marcado") //production
+//@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
