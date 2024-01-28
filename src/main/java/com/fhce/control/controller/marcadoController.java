@@ -16,11 +16,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fhce.control.dao.biometricoDao;
+import com.fhce.control.dao.historialDao;
 import com.fhce.control.dao.horarioDao;
 import com.fhce.control.dao.marcadoDao;
 import com.fhce.control.dao.obsDao;
 import com.fhce.control.model.biometricoModel;
 import com.fhce.control.model.formatoReporteModel;
+import com.fhce.control.model.historialModel;
 import com.fhce.control.model.horarioModel;
 import com.fhce.control.model.marcadoModel;
 import com.fhce.control.model.marcadoTotalModel;
@@ -33,7 +35,7 @@ import com.fhce.control.model.ultimoModel;
 @RequestMapping("fhce-egovf-scc/marcado") //develop
 //@RequestMapping("marcado") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://192.168.31.47:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
@@ -47,6 +49,9 @@ public class marcadoController {
 	
 	@Autowired
 	private obsDao obsDao;
+	
+	@Autowired
+	private historialDao historialDao;
 	
 	@PostMapping("/afa636b2fb7cc7ef69d9a6b7ab1550e02472114f")
 	public void agregarMarcado(@RequestBody marcadoModel marcadoModel) {
@@ -75,20 +80,67 @@ public class marcadoController {
 	}
 	
 	@GetMapping("/reporteMes")
-	public List<formatoReporteModel> getReporteMes(@RequestParam (value="id_horario") Long id_horario,@RequestParam (value="cif") Long cif, @RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes)
+	public List<formatoReporteModel> getReporteMes(@RequestParam (value="cif") Long cif, @RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes,@RequestParam (value="di") int di,@RequestParam (value="df") int df)
 	{
-		List<formatoReporteModel>listaReporte=getReporte(cif,id_horario,gestion,mes);
+		Long horario = (long) 0;
+		
+		List<historialModel>listaHistorial = this.historialDao.getHistorial(cif, gestion);
+		if(listaHistorial.size()==1) {
+			horario = listaHistorial.get(0).get_02horario_id();
+		}
+		else {
+			System.out.println("############################################"+listaHistorial.size());
+			int limite = 0;
+			Long horarioAux = (long) 0;
+			horario = listaHistorial.get(0).get_02horario_id();
+			for(int i=1;i<listaHistorial.size();i++) {
+				if(listaHistorial.get(i).get_04mes()<mes)
+					horario = listaHistorial.get(i).get_02horario_id();
+				if(listaHistorial.get(i).get_04mes() == mes) {
+					limite = listaHistorial.get(i).get_05dia();
+					horarioAux = listaHistorial.get(i).get_02horario_id();
+				}
+					
+			}
+			if(limite >0 && di == 0) {
+				di = 1;
+				df = limite -1;
+			}
+			else {
+				if(di>=limite && di >0 && limite >0)
+					horario = horarioAux;
+				if(df>=limite && df > 0 && di<limite && limite>0)
+					df = limite - 1 ;
+			}
+			
+		}
+		System.out.println("############################################"+horario);
+		List<formatoReporteModel>listaReporte=getReporte(cif,horario,gestion,mes);
 		List<formatoReporteModel>reporteFinal= new ArrayList<formatoReporteModel>();
 		int j=1;
-		for(int i=0;i<listaReporte.size();i++) {
-			if(listaReporte.get(i).isMarcado())
-			{
-				listaReporte.get(i).setId(j);
-				reporteFinal.add(listaReporte.get(i));
-				listaReporte.get(i).mostrar();
-				j++;
+		if(di==0) {
+			for(int i=0;i<listaReporte.size();i++) {
+				if(listaReporte.get(i).isMarcado())
+				{
+					listaReporte.get(i).setId(j);
+					reporteFinal.add(listaReporte.get(i));
+					listaReporte.get(i).mostrar();
+					j++;
+				}
 			}
 		}
+		else {
+			for(int i=0;i<listaReporte.size();i++) {
+				if(listaReporte.get(i).isMarcado() && listaReporte.get(i).getDay()>=di && listaReporte.get(i).getDay()<=df)
+				{
+					listaReporte.get(i).setId(j);
+					reporteFinal.add(listaReporte.get(i));
+					listaReporte.get(i).mostrar();
+					j++;
+				}
+			}
+		}
+		
 		
 		return reporteFinal;
 	}

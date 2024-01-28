@@ -20,13 +20,16 @@ public class historialModel {
 	private Long _01cif;
 	
 	@Column
-	private int _02horario;
+	private Long _02horario_id;
 	
 	@Column
 	private int _03gestion;
 	
 	@Column
 	private int _04mes;
+	
+	@Column
+	private int _05dia;
 
 	public Long getId() {
 		return id;
@@ -44,12 +47,12 @@ public class historialModel {
 		this._01cif = _01cif;
 	}
 
-	public int get_02horario() {
-		return _02horario;
+	public Long get_02horario_id() {
+		return _02horario_id;
 	}
 
-	public void set_02horario(int _02horario) {
-		this._02horario = _02horario;
+	public void set_02horario_id(Long _02horario_id) {
+		this._02horario_id = _02horario_id;
 	}
 
 	public int get_03gestion() {
@@ -66,6 +69,14 @@ public class historialModel {
 
 	public void set_04mes(int _04mes) {
 		this._04mes = _04mes;
+	}
+
+	public int get_05dia() {
+		return _05dia;
+	}
+
+	public void set_05dia(int _05dia) {
+		this._05dia = _05dia;
 	}
 
 }

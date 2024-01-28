@@ -20,7 +20,7 @@ import com.fhce.control.model.obsModel;
 @RequestMapping("fhce-egovf-scc/obs") //develop 
 //@RequestMapping("obs") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://192.168.31.47:8080/") //debelop house
 public class obsController {
 	
 	@Autowired 
@@ -62,6 +62,11 @@ public class obsController {
 	@GetMapping("/getObsPerfil")
 	public List<obsModel> getObsPerfil(@RequestParam (value="cif") Long cif,@RequestParam (value="gestion") int gestion){
 		return obsDao.getObsPerfil(cif,gestion);
+	}
+	
+	@GetMapping("/getObs")
+	public List<obsModel> getObs(@RequestParam (value="cif") Long cif,@RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes){
+		return obsDao.getObs(cif,gestion,mes);
 	}
 
 }

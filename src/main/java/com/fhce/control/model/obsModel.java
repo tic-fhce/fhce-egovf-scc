@@ -56,6 +56,9 @@ public class obsModel {
 	
 	@Column
 	private int _14m;
+	
+	@Column
+	private String _15url;
 
 	public Long getId() {
 		return id;
@@ -175,6 +178,14 @@ public class obsModel {
 
 	public void set_14m(int _14m) {
 		this._14m = _14m;
+	}
+
+	public String get_15url() {
+		return _15url;
+	}
+
+	public void set_15url(String _15url) {
+		this._15url = _15url;
 	}
 	
 }
