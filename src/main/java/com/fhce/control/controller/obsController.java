@@ -20,7 +20,7 @@ import com.fhce.control.model.obsModel;
 @RequestMapping("fhce-egovf-scc/obs") //develop 
 //@RequestMapping("obs") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://172.16.14.91:8080/") //debelop house
 public class obsController {
 	
 	@Autowired 
@@ -55,6 +55,7 @@ public class obsController {
 			auxObs.set_12hora(obsModel.get_12hora());
 			auxObs.set_13h(obsModel.get_13h());
 			auxObs.set_14m(obsModel.get_14m());
+			auxObs.set_15url(obsModel.get_15url());
 			this.obsDao.save(auxObs);
 		}		
 	}
