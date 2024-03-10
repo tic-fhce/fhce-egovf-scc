@@ -39,6 +39,10 @@ public class biometricoModel {
 	
 	@Column
 	private String _08detalle;
+	
+	@Column
+	private int _09sexo;
+	
 
 	public Long getId() {
 		return id;
@@ -111,4 +115,13 @@ public class biometricoModel {
 	public void set_08detalle(String _08detalle) {
 		this._08detalle = _08detalle;
 	}
+
+	public int get_09sexo() {
+		return _09sexo;
+	}
+
+	public void set_09sexo(int _09sexo) {
+		this._09sexo = _09sexo;
+	}
+	
 }

@@ -59,6 +59,10 @@ public class obsModel {
 	
 	@Column
 	private String _15url;
+	
+	@Column
+	private int _16estado;
+	
 
 	public Long getId() {
 		return id;
@@ -187,5 +191,14 @@ public class obsModel {
 	public void set_15url(String _15url) {
 		this._15url = _15url;
 	}
+
+	public int get_16estado() {
+		return _16estado;
+	}
+
+	public void set_16estado(int _16estado) {
+		this._16estado = _16estado;
+	}
+	
 	
 }
