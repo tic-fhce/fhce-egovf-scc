@@ -35,7 +35,7 @@ import com.fhce.control.model.ultimoModel;
 @RequestMapping("fhce-egovf-scc/marcado") //develop
 //@RequestMapping("marcado") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://172.16.14.91:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
@@ -165,15 +165,16 @@ public class marcadoController {
 	
 	public List<formatoReporteModel> getReporte(Long cif,Long id_horario,int gestion,int mes){
 		
-		
-		
 		final Locale español = new Locale("es","MX");
 		String valuedia="";
 		String valuemes="";
 		String fecha="";
 		String dia="";
+		
 		List<biometricoModel> datos=this.biometricoDao.getPerfil(cif);
+		
 		horarioModel horarioModel=this.horarioDao.getById(id_horario);
+		
 		List<marcadoModel>listaMarcado= new ArrayList<marcadoModel>();
 		
 		List<formatoReporteModel>listaReporte=new ArrayList<formatoReporteModel>();
@@ -185,6 +186,7 @@ public class marcadoController {
 		
 		//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		//se crea la lista de marcado
+		
 		for (int i=0;i<datos.size();i++)
 			listaMarcado.addAll(this.marcadoDao.getMarcado(datos.get(i).get_01user_id(),datos.get(i).get_06lugar(), gestion, mes));
 		
@@ -284,37 +286,6 @@ public class marcadoController {
             	break;
         }
 				
-		
-		
-		/*
-        for ( LocalDate day = LocalDate.parse(gestion+"-"+valuemes+"-01"); day.getMonthValue() < mes+1 ; day = day.plusDays(1)) {
-            if(day.getDayOfMonth()>9)
-            	dia=Integer.toString(day.getDayOfMonth());
-            else
-            	dia="0"+Integer.toString(day.getDayOfMonth());
-            fecha=day.getYear()+"-"+valuemes+"-"+dia;
-            
-            List<obserModel>listaux=new ArrayList<obserModel>();
-            for(int i=0;i<listaobserModel.size();i++) {
-            	if(listaobserModel.get(i).getFecha().equals(fecha))
-            	{
-            		obserAux=new obserModel("");
-            		obserAux.setId(listaobserModel.get(i).getId());
-            		obserAux.setFecha(listaobserModel.get(i).getFecha());
-            		obserAux.setTipo(listaobserModel.get(i).getTipo());
-            		obserAux.setUidobs(listaobserModel.get(i).getUidobs());
-            		obserAux.setDetalle(listaobserModel.get(i).getDetalle());
-            		obserAux.setHora(listaobserModel.get(i).getHora());
-            		obserAux.setH(listaobserModel.get(i).getH());
-            		obserAux.setM(listaobserModel.get(i).getM());
-            		listaux.add(obserAux);
-            	}
-            }
-            
-            reporte= new formatoReporteModel(0,day.getDayOfWeek().getDisplayName(TextStyle.FULL, español),day.getDayOfMonth(),day.getMonthValue(),fecha,true,listaux);
-            listaReporte.add(reporte);
-        }
-        */
 
         //#####################################################################
 		
@@ -377,8 +348,8 @@ public class marcadoController {
 	@GetMapping("/reporteTotal")
 	public List<marcadoTotalModel> getReporteTotal(@RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes, @RequestParam (value="tipo") int tipo) {
 		
-		List<marcadoTotalModel>listaTotal=new ArrayList<marcadoTotalModel>();
-		List<biometricoModel>listaBiometrico=biometricoDao.findAll();
+		List<marcadoTotalModel>listaTotal = new ArrayList<marcadoTotalModel>();
+		List<biometricoModel>listaBiometrico = this.biometricoDao.getAll((long) tipo);
 		int retraso=0;
 		int antisipado=0;
 		int penalisacion=0;
@@ -390,56 +361,61 @@ public class marcadoController {
 		boolean ingreso=true;
 		boolean pena= true;
 		marcadoTotalModel aux;
+		
 		for(int i=0;i<listaBiometrico.size();i++) {
 			ingreso=true;
 			// se verifica que el usuario no ingrese al ranking 2 veces 
 			for(int k=0;k<listaTotal.size();k++) {
-				if(listaTotal.get(k).getCif().longValue()== listaBiometrico.get(i).get_03cif().longValue()) {
+				if(listaTotal.get(k).getCif().longValue() == listaBiometrico.get(i).get_03cif().longValue()) {
 					ingreso=false;
 					break;
 				}
 			}
 			if(ingreso) {
-				if(listaBiometrico.get(i).get_03cif().longValue()>0 && listaBiometrico.get(i).get_07id_tipo()==tipo && listaBiometrico.get(i).get_04estado()==0) {
-					List<horarioModel>idhorarioLista=horarioDao.getListaId(listaBiometrico.get(i).get_03cif());
-					List<formatoReporteModel>listaReporte=getReporte(listaBiometrico.get(i).get_03cif(),idhorarioLista.get(idhorarioLista.size()-1).getId(),gestion,mes);
-					List<formatoReporteModel>reporteFinal= new ArrayList<formatoReporteModel>();
-					int j=1;
-					for(int k=0;k<listaReporte.size();k++) {
-						if(listaReporte.get(k).isMarcado())
-						{
-							listaReporte.get(k).setId(j);
-							reporteFinal.add(listaReporte.get(k));
-							listaReporte.get(k).mostrar();
-							j++;
-						}
+				
+				
+				List<horarioModel>idhorarioLista = this.horarioDao.getListaId(listaBiometrico.get(i).get_03cif()); // Traemos la lista de Horarios del Empleado registrado en el biometrico
+				
+				List<formatoReporteModel>listaReporte = getReporte(listaBiometrico.get(i).get_03cif(),idhorarioLista.get(idhorarioLista.size()-1).getId(),gestion,mes);
+				
+				
+				List<formatoReporteModel>reporteFinal = new ArrayList<formatoReporteModel>();
+				int j=1;
+				for(int k=0;k<listaReporte.size();k++) {
+					if(listaReporte.get(k).isMarcado())
+					{
+						listaReporte.get(k).setId(j);
+						reporteFinal.add(listaReporte.get(k));
+						listaReporte.get(k).mostrar();
+						j++;
 					}
-					retraso=0;
-					antisipado=0;
-					penalisacion=0;
-					for (int f=0;f<reporteFinal.size();f++) {
-						r=reporteFinal.get(f).getRetraso();
-						retraso=retraso+r[0]+r[2];
-						antisipado=antisipado+r[1]+r[3];
+				}
+				
+				retraso=0;
+				antisipado=0;
+				penalisacion=0;
+				for (int f=0;f<reporteFinal.size();f++) {
+					r=reporteFinal.get(f).getRetraso();
+					retraso=retraso+r[0]+r[2];
+					antisipado=antisipado+r[1]+r[3];
 						
-						pena=false;
-						lugar = reporteFinal.get(f).getLugar();
-						hora= reporteFinal.get(f).getHora();
-						if(reporteFinal.get(f).getObserModel().size()==0) {
-							for(int k=0;k<4;k++) {
-								if(lugar[k].equals("Sin Lugar") && hora[k].equals("Sin Marcar")) {
-									pena=true;
-								}
+					pena=false;
+					lugar = reporteFinal.get(f).getLugar();
+					hora= reporteFinal.get(f).getHora();
+					if(reporteFinal.get(f).getObserModel().size()==0) {
+						for(int k=0;k<4;k++) {
+							if(lugar[k].equals("Sin Lugar") && hora[k].equals("Sin Marcar")) {
+								pena=true;
 							}
 						}
-						if(pena) {
-							penalisacion++;
-						}
-						
 					}
-					penalisacion=penalisacion+retraso+antisipado;
-					listaTotal.add(new marcadoTotalModel(listaBiometrico.get(i).get_03cif(),reporteFinal,retraso,antisipado,penalisacion));
+					if(pena) {
+						penalisacion++;
+					}
+						
 				}
+				penalisacion=penalisacion+retraso+antisipado;
+				listaTotal.add(new marcadoTotalModel(listaBiometrico.get(i).get_03cif(),reporteFinal,retraso,antisipado,penalisacion));
 			}
 			
 		}
@@ -458,6 +434,5 @@ public class marcadoController {
 			}
 		}
 		return listaTotal;
-		
 	}
 }

@@ -24,4 +24,5 @@ public interface biometricoDao extends JpaRepository<biometricoModel,Long>{
 	@Query(value = "select * from biometrico where _07id_tipo=? and _09sexo=? and _03cif>0 and _04estado=0",nativeQuery=true)
 	List<biometricoModel>getAllGenero(Long idtipo,int sexo);
 	
+	
 }

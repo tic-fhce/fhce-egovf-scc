@@ -23,7 +23,7 @@ import com.fhce.control.obj.obsObj;
 @RequestMapping("fhce-egovf-scc/obs") //develop 
 //@RequestMapping("obs") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://172.16.14.91:8080/") //debelop house
 public class obsController {
 	
 	@Autowired 
