@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +24,7 @@ import com.fhce.control.obj.obsObj;
 @RequestMapping("fhce-egovf-scc/obs") //develop 
 //@RequestMapping("obs") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://172.16.14.91:8080/") //debelop house
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class obsController {
 	
 	@Autowired 
@@ -107,12 +108,27 @@ public class obsController {
 	
 	@GetMapping("/getObsPerfil")
 	public List<obsModel> getObsPerfil(@RequestParam (value="cif") Long cif,@RequestParam (value="gestion") int gestion){
-		return obsDao.getObsPerfil(cif,gestion);
+		return this.obsDao.getObsPerfil(cif,gestion);
 	}
 	
 	@GetMapping("/getObs")
 	public List<obsModel> getObs(@RequestParam (value="cif") Long cif,@RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes){
-		return obsDao.getObs(cif,gestion,mes);
+		return this.obsDao.getObs(cif,gestion,mes);
+	}
+	
+	@GetMapping("/getObsUsuario")
+	public List<obsModel> getObsUsuario(@RequestParam (value="cif") Long cif,@RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes){
+		return this.obsDao.getObsUsuario(cif,gestion,mes);
+	}
+	
+	@PutMapping("/updateObs")
+	public void updateObs(@RequestBody obsModel obsModel) {
+		this.obsDao.save(obsModel);		
+	}
+	
+	@GetMapping("/getListaObs")
+	public List<obsModel> getListaObs(){
+		return this.obsDao.getListaObs();
 	}
 
 }

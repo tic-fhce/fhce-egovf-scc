@@ -35,7 +35,7 @@ import com.fhce.control.model.ultimoModel;
 @RequestMapping("fhce-egovf-scc/marcado") //develop
 //@RequestMapping("marcado") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://172.16.14.91:8080/") //debelop house
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
@@ -89,7 +89,6 @@ public class marcadoController {
 			horario = listaHistorial.get(0).get_02horario_id();
 		}
 		else {
-			System.out.println("############################################"+listaHistorial.size());
 			int limite = 0;
 			Long horarioAux = (long) 0;
 			horario = listaHistorial.get(0).get_02horario_id();
@@ -166,21 +165,21 @@ public class marcadoController {
 	public List<formatoReporteModel> getReporte(Long cif,Long id_horario,int gestion,int mes){
 		
 		final Locale español = new Locale("es","MX");
-		String valuedia="";
-		String valuemes="";
-		String fecha="";
-		String dia="";
+		String valuedia = "";
+		String valuemes = "";
+		String fecha = "";
+		String dia = "";
 		
-		List<biometricoModel> datos=this.biometricoDao.getPerfil(cif);
+		List<biometricoModel> datos = this.biometricoDao.getPerfil(cif);
 		
-		horarioModel horarioModel=this.horarioDao.getById(id_horario);
+		horarioModel horarioModel = this.horarioDao.getById(id_horario);
 		
-		List<marcadoModel>listaMarcado= new ArrayList<marcadoModel>();
+		List<marcadoModel>listaMarcado = new ArrayList<marcadoModel>();
 		
-		List<formatoReporteModel>listaReporte=new ArrayList<formatoReporteModel>();
+		List<formatoReporteModel>listaReporte = new ArrayList<formatoReporteModel>();
 		
-		List<obsModel>obsModel=this.obsDao.getObs(cif, gestion, mes);
-		List<obserModel>listaobserModel=new ArrayList<obserModel>();
+		List<obsModel>obsModel = this.obsDao.getObs(cif, gestion, mes);
+		List<obserModel>listaobserModel = new ArrayList<obserModel>();
 		obserModel obserAux;
 		formatoReporteModel reporte;
 		
@@ -194,30 +193,30 @@ public class marcadoController {
 		for(int i=0;i<obsModel.size();i++) {
 			for(int j=obsModel.get(i).get_07di();j<=obsModel.get(i).get_08df();j++) {
 				if(obsModel.get(i).get_06mes()>9)
-					valuemes=Integer.toString(mes);
+					valuemes = Integer.toString(mes);
 				else
-					valuemes="0"+Integer.toString(mes);
+					valuemes = "0"+Integer.toString(mes);
 				if(j>9)
-					valuedia=""+j;
+					valuedia = ""+j;
 				else
-					valuedia="0"+j;
-				fecha=obsModel.get(i).get_05gestion()+"-"+valuemes+"-"+valuedia;
+					valuedia = "0"+j;
+				fecha = obsModel.get(i).get_05gestion()+"-"+valuemes+"-"+valuedia;
 				listaobserModel.add(new obserModel(obsModel.get(i).getId(),obsModel.get(i).get_02uidobs(),fecha,obsModel.get(i).get_09detalle(),obsModel.get(i).get_11tipo(),obsModel.get(i).get_12hora(),obsModel.get(i).get_13h(),obsModel.get(i).get_14m()));
 			}
 		}
 				
 		// Ordenamos la Lista Despues de Crearlo
-		int menor=0;
-		int mayor=0;
+		int menor = 0;
+		int mayor = 0;
 		marcadoModel aux;
 		for(int i=0;i<listaMarcado.size()-1;i++) {
-			marcadoModel marcadoMenor=listaMarcado.get(i);
-			menor=marcadoMenor.get_07dia();
+			marcadoModel marcadoMenor = listaMarcado.get(i);
+			menor = marcadoMenor.get_07dia();
 			for(int j=i+1;j<listaMarcado.size();j++) {
-				marcadoModel marcadoMayor=listaMarcado.get(j);
-				mayor=marcadoMayor.get_07dia();
+				marcadoModel marcadoMayor = listaMarcado.get(j);
+				mayor = marcadoMayor.get_07dia();
 				if(mayor < menor) {
-					aux=listaMarcado.get(i);
+					aux = listaMarcado.get(i);
 					listaMarcado.set(i, listaMarcado.get(j));
 					listaMarcado.set(j, aux);
 				}
@@ -225,21 +224,18 @@ public class marcadoController {
 		}
 		//$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$
 		
-		
-		
-		
 		// Ordenamos la Lista Despues de Crearlo la Lista de Observaciones
-		menor=0;
-		mayor=0;
+		menor = 0;
+		mayor = 0;
 		obserModel auxObserModel;
 		for(int i=0;i<listaobserModel.size()-1;i++) {
 			obserModel obserModelMenor=listaobserModel.get(i);
-			menor=Integer.parseInt(obserModelMenor.getFecha().substring(8, 10));
+			menor = Integer.parseInt(obserModelMenor.getFecha().substring(8, 10));
 			for(int j=i+1;j<listaobserModel.size();j++) {		
-				obserModel obserModelMayor =listaobserModel.get(j);
-				mayor=Integer.parseInt(obserModelMayor.getFecha().substring(8, 10));
+				obserModel obserModelMayor = listaobserModel.get(j);
+				mayor = Integer.parseInt(obserModelMayor.getFecha().substring(8, 10));
 				if(mayor < menor) {
-					auxObserModel=listaobserModel.get(i);
+					auxObserModel = listaobserModel.get(i);
 					listaobserModel.set(i, listaobserModel.get(j));
 					listaobserModel.set(j, auxObserModel);
 				}
@@ -250,23 +246,23 @@ public class marcadoController {
 		//#####################################################################
 		//se crea el calendario con los dias corespondientes para el formato del reporte
 		if(mes>9)
-			valuemes=Integer.toString(mes);
+			valuemes = Integer.toString(mes);
 		else
-			valuemes="0"+Integer.toString(mes);
+			valuemes = "0"+Integer.toString(mes);
 		
 		for ( LocalDate day = LocalDate.parse(gestion+"-"+valuemes+"-01"); day.getMonthValue() < mes+1 ; day = day.plusDays(1)) {
-            if(day.getYear()==gestion) {
+            if(day.getYear() == gestion) {
 				if(day.getDayOfMonth()>9)
-	            	dia=Integer.toString(day.getDayOfMonth());
+	            	dia = Integer.toString(day.getDayOfMonth());
 	            else
-	            	dia="0"+Integer.toString(day.getDayOfMonth());
+	            	dia = "0"+Integer.toString(day.getDayOfMonth());
 	            
-	            fecha=day.getYear()+"-"+valuemes+"-"+dia;
+	            fecha = day.getYear()+"-"+valuemes+"-"+dia;
 	            List<obserModel>listaux=new ArrayList<obserModel>();
 	            for(int i=0;i<listaobserModel.size();i++) {
 	            	if(listaobserModel.get(i).getFecha().equals(fecha))
 	            	{
-	            		obserAux=new obserModel("");
+	            		obserAux = new obserModel("");
 	            		obserAux.setId(listaobserModel.get(i).getId());
 	            		obserAux.setFecha(listaobserModel.get(i).getFecha());
 	            		obserAux.setTipo(listaobserModel.get(i).getTipo());
@@ -279,7 +275,7 @@ public class marcadoController {
 	            	}
 	            }
 	            
-	            reporte= new formatoReporteModel(0,day.getDayOfWeek().getDisplayName(TextStyle.FULL, español),day.getDayOfMonth(),day.getMonthValue(),fecha,true,listaux);
+	            reporte = new formatoReporteModel(0,day.getDayOfWeek().getDisplayName(TextStyle.FULL, español),day.getDayOfMonth(),day.getMonthValue(),fecha,true,listaux);
 	            listaReporte.add(reporte);
             }
             else
