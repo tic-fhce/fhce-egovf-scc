@@ -106,4 +106,16 @@ public class biometricoController {
 	public void estadoBiometrico(@RequestBody biometricoModel biometricoModel) {
 		this.biometricoDao.save(biometricoModel);
 	}
+	
+	@PutMapping("/updateTipo")
+	public void updateTipo(@RequestParam (value="cif") Long cif, @RequestParam (value="tipo") Long tipo) {
+		List<biometricoModel>biometrico = this.biometricoDao.getPerfil(cif);
+		biometricoModel aux;
+		for(int i=0;i<biometrico.size();i++) {
+			aux = biometrico.get(i);
+			aux.set_07id_tipo(tipo);
+			this.biometricoDao.save(aux);
+		}
+		
+	}
 }
