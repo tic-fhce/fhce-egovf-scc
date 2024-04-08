@@ -109,11 +109,24 @@ public class biometricoController {
 	
 	@PutMapping("/updateTipo")
 	public void updateTipo(@RequestParam (value="cif") Long cif, @RequestParam (value="tipo") Long tipo) {
+		System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%"+cif);
 		List<biometricoModel>biometrico = this.biometricoDao.getPerfil(cif);
 		biometricoModel aux;
 		for(int i=0;i<biometrico.size();i++) {
 			aux = biometrico.get(i);
 			aux.set_07id_tipo(tipo);
+			this.biometricoDao.save(aux);
+		}
+		
+	}
+	@PutMapping("/updateBiometricoTipo")
+	public void updateBiometricoTipo(@RequestBody biometricoModel biometricoModel) {
+
+		List<biometricoModel>biometrico = this.biometricoDao.getPerfil(biometricoModel.get_03cif());
+		biometricoModel aux;
+		for(int i=0;i<biometrico.size();i++) {
+			aux = biometrico.get(i);
+			aux.set_07id_tipo(biometricoModel.get_07id_tipo());
 			this.biometricoDao.save(aux);
 		}
 		

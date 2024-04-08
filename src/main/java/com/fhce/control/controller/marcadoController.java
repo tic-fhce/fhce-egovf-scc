@@ -371,7 +371,7 @@ public class marcadoController {
 				
 				
 				List<horarioModel>idhorarioLista = this.horarioDao.getListaId(listaBiometrico.get(i).get_03cif()); // Traemos la lista de Horarios del Empleado registrado en el biometrico
-				
+				System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"+listaBiometrico.get(i).get_02nombre());
 				List<formatoReporteModel>listaReporte = getReporte(listaBiometrico.get(i).get_03cif(),idhorarioLista.get(idhorarioLista.size()-1).getId(),gestion,mes);
 				
 				
