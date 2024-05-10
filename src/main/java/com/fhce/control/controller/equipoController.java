@@ -20,7 +20,7 @@ import com.fhce.control.obj.equipoObj;
 @RequestMapping("fhce-egovf-scc/equipo") //develop
 //@RequestMapping("equipo") //production
 //@CrossOrigin("http://svfhce.umsa.bo/") //debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://172.16.14.91:8080/") //debelop house
 public class equipoController {
 	
 	@Autowired
