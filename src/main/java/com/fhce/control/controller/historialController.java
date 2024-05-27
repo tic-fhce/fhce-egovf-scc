@@ -15,7 +15,7 @@ import com.fhce.control.model.historialModel;
 @RequestMapping("fhce-egovf-scc/historial") //develop
 //@RequestMapping("historial") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://172.16.14.91:8080/") //debelop house
+@CrossOrigin("http://192.168.31.45:8080/") //debelop house
 public class historialController {
 	
 	@Autowired
