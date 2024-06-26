@@ -29,13 +29,14 @@ import com.fhce.control.model.marcadoTotalModel;
 import com.fhce.control.model.obsModel;
 import com.fhce.control.model.obserModel;
 import com.fhce.control.model.ultimoModel;
+import com.fhce.control.obj.marcadoBrutoObj;
 
 
 @RestController
 @RequestMapping("fhce-egovf-scc/marcado") //develop
 //@RequestMapping("marcado") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://192.168.31.45:8080/") //debelop house
+@CrossOrigin("http://172.16.114.157.45:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
@@ -368,8 +369,7 @@ public class marcadoController {
 				}
 			}
 			if(ingreso) {
-				
-				
+						
 				List<horarioModel>idhorarioLista = this.horarioDao.getListaId(listaBiometrico.get(i).get_03cif()); // Traemos la lista de Horarios del Empleado registrado en el biometrico
 				System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&"+listaBiometrico.get(i).get_02nombre());
 				List<formatoReporteModel>listaReporte = getReporte(listaBiometrico.get(i).get_03cif(),idhorarioLista.get(idhorarioLista.size()-1).getId(),gestion,mes);
@@ -430,5 +430,253 @@ public class marcadoController {
 			}
 		}
 		return listaTotal;
+	}
+	@GetMapping("/reporteBruto")
+	public void getReporteBruto(@RequestParam (value="gestion") int gestion,@RequestParam (value="mes") int mes, @RequestParam (value="tipo") int tipo) {
+		List<biometricoModel>listabiometrico = this.biometricoDao.getAll((long) tipo);
+		List<marcadoModel>listaMarcado;
+		List<marcadoBrutoObj>marcado;
+		List<String>cif = new ArrayList<String>();
+		List<obsModel>obsModel;
+		
+		//horarioModel horarioModel = this.horarioDao.getById(id_horario);
+		
+		boolean existeCif = true;
+		for(int i=0;i<listabiometrico.size();i++){
+			String lcif = listabiometrico.get(i).get_03cif().toString();
+			existeCif = true;
+			listaMarcado = new ArrayList<marcadoModel>();
+			for(int c=0;c<cif.size();c++) {
+				if(cif.get(c).equals(lcif)) {
+					existeCif = false;
+				}
+			}
+			if(existeCif) {
+				marcado = new ArrayList<marcadoBrutoObj>();
+				marcado.add(new marcadoBrutoObj(listabiometrico.get(i).get_03cif(),listabiometrico.get(i).get_01user_id(),listabiometrico.get(i).get_05horario_id(),listabiometrico.get(i).get_06lugar()));
+				for(int j=i;j<listabiometrico.size();j++){
+					if(listabiometrico.get(i).get_03cif().longValue() == listabiometrico.get(j).get_03cif().longValue()) {
+						marcado.add(new marcadoBrutoObj(listabiometrico.get(i).get_03cif(),listabiometrico.get(i).get_01user_id(),listabiometrico.get(i).get_05horario_id(),listabiometrico.get(i).get_06lugar()));
+					}
+				}
+				//Creamos lista de Marcados
+				for(int j = 0 ; j < marcado.size(); j++)
+					listaMarcado.addAll(this.marcadoDao.getMarcado(marcado.get(j).getUserId(),marcado.get(j).getLugar(), gestion, mes));
+				
+				// Ordenamos la Lista Despues de Crearlo
+				listaDiaOrdenada(listaMarcado);
+				
+				//Extraemos las Obserbacione 
+				obsModel = this.obsDao.getObs(marcado.get(0).getCif(), gestion, mes);
+				List<obserModel>listaobserModel = new ArrayList<obserModel>();
+				
+				//se crean las observaciones
+				listaObs(obsModel,listaobserModel,mes);
+						
+				// Ordenamos la Lista de observaciones Despues de Crearlo
+				listaObsOrdenada(listaobserModel);
+				
+				//Creamos el formato de calendario
+				List<formatoReporteModel>listaReporte = formatCalendar(listaobserModel,gestion,mes);
+				
+				
+				
+			}
+		}
+		
+	}
+	public void listaDiaOrdenada(List<marcadoModel>listaMarcado) {
+		// Ordenamos la Lista Despues de Crearlo
+		int menor = 0;
+		int mayor = 0;
+		marcadoModel aux;
+		for(int i=0;i<listaMarcado.size()-1;i++) {
+			marcadoModel marcadoMenor = listaMarcado.get(i);
+			menor = marcadoMenor.get_07dia();
+			for(int j=i+1;j<listaMarcado.size();j++) {
+				marcadoModel marcadoMayor = listaMarcado.get(j);
+				mayor = marcadoMayor.get_07dia();
+				if(mayor < menor) {
+					aux = listaMarcado.get(i);
+					listaMarcado.set(i, listaMarcado.get(j));
+					listaMarcado.set(j, aux);
+				}
+			}
+		}
+	}
+	public void listaObsOrdenada(List<obserModel>listaobserModel) {
+		int menor = 0;
+		int mayor = 0;
+		obserModel auxObserModel;
+		for(int i=0;i<listaobserModel.size()-1;i++) {
+			obserModel obserModelMenor=listaobserModel.get(i);
+			menor = Integer.parseInt(obserModelMenor.getFecha().substring(8, 10));
+			for(int j=i+1;j<listaobserModel.size();j++) {		
+				obserModel obserModelMayor = listaobserModel.get(j);
+				mayor = Integer.parseInt(obserModelMayor.getFecha().substring(8, 10));
+				if(mayor < menor) {
+					auxObserModel = listaobserModel.get(i);
+					listaobserModel.set(i, listaobserModel.get(j));
+					listaobserModel.set(j, auxObserModel);
+				}
+			}
+		}
+	}
+	public void listaObs(List<obsModel>obsModel,List<obserModel>listaobserModel, int mes) {
+		String valuemes = "";
+		String valuedia = "";
+		String fecha = "";
+		for(int i=0;i<obsModel.size();i++) {
+			for(int j=obsModel.get(i).get_07di();j<=obsModel.get(i).get_08df();j++) {
+				if(obsModel.get(i).get_06mes()>9)
+					valuemes = Integer.toString(mes);
+				else
+					valuemes = "0"+Integer.toString(mes);
+				if(j>9)
+					valuedia = ""+j;
+				else
+					valuedia = "0"+j;
+				fecha = obsModel.get(i).get_05gestion()+"-"+valuemes+"-"+valuedia;
+				listaobserModel.add(new obserModel(obsModel.get(i).getId(),obsModel.get(i).get_02uidobs(),fecha,obsModel.get(i).get_09detalle(),obsModel.get(i).get_11tipo(),obsModel.get(i).get_12hora(),obsModel.get(i).get_13h(),obsModel.get(i).get_14m()));
+			}
+		}
+	}
+	public List<formatoReporteModel> formatCalendar(List<obserModel>listaobserModel,int gestion,int mes) {
+		List<formatoReporteModel>listaReporte = new ArrayList<formatoReporteModel>();
+		
+		final Locale español = new Locale("es","MX");
+		
+		String valuemes = "";
+		String valuedia = "";
+		String dia = "";
+		String fecha = "";
+		obserModel obserAux;
+		formatoReporteModel reporte;
+		
+		if(mes>9)
+			valuemes = Integer.toString(mes);
+		else
+			valuemes = "0"+Integer.toString(mes);
+		
+		for ( LocalDate day = LocalDate.parse(gestion+"-"+valuemes+"-01"); day.getMonthValue() < mes+1 ; day = day.plusDays(1)) {
+            if(day.getYear() == gestion) {
+				if(day.getDayOfMonth()>9)
+	            	dia = Integer.toString(day.getDayOfMonth());
+	            else
+	            	dia = "0"+Integer.toString(day.getDayOfMonth());
+	            
+	            fecha = day.getYear()+"-"+valuemes+"-"+dia;
+	            List<obserModel>listaux = new ArrayList<obserModel>();
+	            for(int i = 0;i<listaobserModel.size();i++) {
+	            	if(listaobserModel.get(i).getFecha().equals(fecha))
+	            	{
+	            		obserAux = new obserModel("");
+	            		obserAux.setId(listaobserModel.get(i).getId());
+	            		obserAux.setFecha(listaobserModel.get(i).getFecha());
+	            		obserAux.setTipo(listaobserModel.get(i).getTipo());
+	            		obserAux.setUidobs(listaobserModel.get(i).getUidobs());
+	            		obserAux.setDetalle(listaobserModel.get(i).getDetalle());
+	            		obserAux.setHora(listaobserModel.get(i).getHora());
+	            		obserAux.setH(listaobserModel.get(i).getH());
+	            		obserAux.setM(listaobserModel.get(i).getM());
+	            		listaux.add(obserAux);
+	            	}
+	            }
+	            
+	            reporte = new formatoReporteModel(0,day.getDayOfWeek().getDisplayName(TextStyle.FULL, español),day.getDayOfMonth(),day.getMonthValue(),fecha,true,listaux);
+	            listaReporte.add(reporte);
+            }
+            else
+            	break;
+        }
+		return listaReporte;
+	}
+	public void marcadoReporte(List<formatoReporteModel> listaReporte,List<marcadoModel>listaMarcado) {
+		for(int i=0;i<listaReporte.size();i++) {
+        	for(int j=0;j<listaMarcado.size();j++) {
+        		if(listaReporte.get(i).getFecha().equals(listaMarcado.get(j).get_03fecha())) {
+        			listaReporte.get(i).addMarcado(listaMarcado.get(j));
+        		}
+        	}/*
+        	switch(listaReporte.get(i).getDia()) {
+        		case "lunes":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_02lem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_03lsm());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_04let());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_05lst());
+        			break;
+        		case "martes":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_06mem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_07msm());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_08met());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_09mst());
+        			break;
+        		case "miércoles":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_10miem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_11mism());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_12miet());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_13mist());
+        			break;
+        		case "jueves":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_14jem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_15jsm());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_16jet());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_17jst());
+        			break;
+        		case "viernes":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_18vem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_19vsm());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_20vet());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_21vst());
+        			break;
+        		case "sábado":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_22sem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_23ssm());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_24set());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_25sst());
+        			break;
+        		case "domingo":
+        			listaReporte.get(i).setTurnoB(0, horarioModel.get_26dem());
+        			listaReporte.get(i).setTurnoB(1, horarioModel.get_27dsm());
+        			listaReporte.get(i).setTurnoB(2, horarioModel.get_28det());
+        			listaReporte.get(i).setTurnoB(3, horarioModel.get_29dst());
+        			break;
+        	}*/
+        	listaReporte.get(i).reporte();
+        }
+	}
+	public Long getHorarioId(Long cif, int gestion, int mes,int di, int df) {
+		Long horario = (long) 0;
+		
+		List<historialModel>listaHistorial = this.historialDao.getHistorial(cif, gestion);
+		if(listaHistorial.size()==1) {
+			horario = listaHistorial.get(0).get_02horario_id();
+		}
+		else {
+			int limite = 0;
+			Long horarioAux = (long) 0;
+			horario = listaHistorial.get(0).get_02horario_id();
+			for(int i=1;i<listaHistorial.size();i++) {
+				if(listaHistorial.get(i).get_04mes()<mes)
+					horario = listaHistorial.get(i).get_02horario_id();
+				if(listaHistorial.get(i).get_04mes() == mes) {
+					limite = listaHistorial.get(i).get_05dia();
+					horarioAux = listaHistorial.get(i).get_02horario_id();
+				}
+					
+			}
+			if(limite >0 && di == 0) {
+				di = 1;
+				df = limite -1;
+			}
+			else {
+				if(di>=limite && di >0 && limite >0)
+					horario = horarioAux;
+				if(df>=limite && df > 0 && di<limite && limite>0)
+					df = limite - 1 ;
+			}
+			
+		}
+		return horario;
 	}
 }
