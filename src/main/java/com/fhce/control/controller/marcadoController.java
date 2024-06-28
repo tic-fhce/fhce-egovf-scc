@@ -439,7 +439,7 @@ public class marcadoController {
 		List<String>cif = new ArrayList<String>();
 		List<obsModel>obsModel;
 		
-		//horarioModel horarioModel = this.horarioDao.getById(id_horario);
+		
 		
 		boolean existeCif = true;
 		for(int i=0;i<listabiometrico.size();i++){
@@ -477,9 +477,11 @@ public class marcadoController {
 				listaObsOrdenada(listaobserModel);
 				
 				//Creamos el formato de calendario
-				List<formatoReporteModel>listaReporte = formatCalendar(listaobserModel,gestion,mes);
+				List<formatoReporteModel>listaReporte = formatCalendar(new ArrayList<obserModel>(),gestion,mes);
 				
-				
+				// Creamos el Formato del reporte
+				horarioModel horarioModel = this.horarioDao.getById((long) marcado.get(0).getHorarioId());
+				marcadoReporte(listaReporte,listaMarcado,horarioModel);
 				
 			}
 		}
@@ -591,13 +593,13 @@ public class marcadoController {
         }
 		return listaReporte;
 	}
-	public void marcadoReporte(List<formatoReporteModel> listaReporte,List<marcadoModel>listaMarcado) {
+	public void marcadoReporte(List<formatoReporteModel> listaReporte,List<marcadoModel>listaMarcado,horarioModel horarioModel) {
 		for(int i=0;i<listaReporte.size();i++) {
         	for(int j=0;j<listaMarcado.size();j++) {
         		if(listaReporte.get(i).getFecha().equals(listaMarcado.get(j).get_03fecha())) {
         			listaReporte.get(i).addMarcado(listaMarcado.get(j));
         		}
-        	}/*
+        	}
         	switch(listaReporte.get(i).getDia()) {
         		case "lunes":
         			listaReporte.get(i).setTurnoB(0, horarioModel.get_02lem());
@@ -641,7 +643,7 @@ public class marcadoController {
         			listaReporte.get(i).setTurnoB(2, horarioModel.get_28det());
         			listaReporte.get(i).setTurnoB(3, horarioModel.get_29dst());
         			break;
-        	}*/
+        	}
         	listaReporte.get(i).reporte();
         }
 	}
