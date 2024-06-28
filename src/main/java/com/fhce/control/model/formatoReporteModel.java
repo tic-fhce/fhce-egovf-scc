@@ -155,17 +155,24 @@ public class formatoReporteModel {
 		this.marcadoModel.add(marcadoModel);
 	}
 	public void mostrar() {
+		System.out.println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
 		System.out.println(this.fecha + " - "+ this.marcado);
 		System.out.println(this.dia+" "+this.day);
 		//System.out.println(this.obserModel.getTipo() +" -- " +this.obserModel.getHora());
-		System.out.println("Turno "+this.turno[0] +"\t"+this.turno[1]+"\t"+this.turno[2]+"\t"+this.turno[3]);
-		System.out.println("Turno "+this.turnoB[0] +"\t"+this.turnoB[1]+"\t"+this.turnoB[2]+"\t"+this.turnoB[3]);
+		//System.out.println("Lugar\tTurno "+this.turno[0] +"\t"+this.turno[1]+"\t"+this.turno[2]+"\t"+this.turno[3]);
+		
+		System.out.println(this.lugar[0]+"\t"+this.turno[0] +"\t"+this.turnoB[0]+"\t"+this.hora[0]+"\t"+this.retraso[0]);
+		System.out.println(this.lugar[1]+"\t"+this.turno[1] +"\t"+this.turnoB[1]+"\t"+this.hora[1]+"\t"+this.retraso[1]);
+		System.out.println(this.lugar[2]+"\t"+this.turno[2] +"\t"+this.turnoB[2]+"\t"+this.hora[2]+"\t"+this.retraso[2]);
+		System.out.println(this.lugar[3]+"\t"+this.turno[3] +"\t"+this.turnoB[3]+"\t"+this.hora[3]+"\t"+this.retraso[3]);
+		
+		/*System.out.println("Turno "+this.turnoB[0] +"\t"+this.turnoB[1]+"\t"+this.turnoB[2]+"\t"+this.turnoB[3]);
 		System.out.println("Hora "+this.hora[0] +"\t"+this.hora[1]+"\t"+this.hora[2]+"\t"+this.hora[3]);
 		System.out.println("Lugar "+this.lugar[0] +"\t"+this.lugar[1]+"\t"+this.lugar[2]+"\t"+this.lugar[3]);
-		System.out.println("Retraso "+this.retraso[0] +"\t"+this.retraso[1]+"\t"+this.retraso[2]+"\t"+this.retraso[3]);
-		for(int i=0;i<this.marcadoModel.size();i++) {
+		System.out.println("Retraso "+this.retraso[0] +"\t"+this.retraso[1]+"\t"+this.retraso[2]+"\t"+this.retraso[3]);*/
+		/*for(int i=0;i<this.marcadoModel.size();i++) {
 			System.out.println(this.marcadoModel.get(i).get_03fecha() + " " +this.marcadoModel.get(i).get_04hora()+" "+this.marcadoModel.get(i).get_12lugar());
-		}
+		}*/
 	}
 	
 	public void setTurnoB(int i,String hora) {

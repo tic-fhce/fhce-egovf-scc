@@ -36,7 +36,7 @@ import com.fhce.control.obj.marcadoBrutoObj;
 @RequestMapping("fhce-egovf-scc/marcado") //develop
 //@RequestMapping("marcado") //production
 //@CrossOrigin("http://svfhce.umsa.bo/")//debelop Fhce
-@CrossOrigin("http://172.16.114.157.45:8080/") //debelop house
+@CrossOrigin("http://172.16.14.91:8080/") //debelop house
 public class marcadoController {
 	
 	@Autowired
@@ -124,7 +124,7 @@ public class marcadoController {
 				{
 					listaReporte.get(i).setId(j);
 					reporteFinal.add(listaReporte.get(i));
-					listaReporte.get(i).mostrar();
+					//listaReporte.get(i).mostrar();
 					j++;
 				}
 			}
@@ -135,10 +135,14 @@ public class marcadoController {
 				{
 					listaReporte.get(i).setId(j);
 					reporteFinal.add(listaReporte.get(i));
-					listaReporte.get(i).mostrar();
+					//listaReporte.get(i).mostrar();
 					j++;
 				}
 			}
+		}
+		
+		for(int i=0;i<reporteFinal.size();i++) {
+			reporteFinal.get(i).mostrar();
 		}
 		
 		
@@ -443,6 +447,7 @@ public class marcadoController {
 		
 		boolean existeCif = true;
 		for(int i=0;i<listabiometrico.size();i++){
+			System.out.println("###############################&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&" + listabiometrico.get(i).get_03cif());
 			String lcif = listabiometrico.get(i).get_03cif().toString();
 			existeCif = true;
 			listaMarcado = new ArrayList<marcadoModel>();
@@ -482,6 +487,9 @@ public class marcadoController {
 				// Creamos el Formato del reporte
 				horarioModel horarioModel = this.horarioDao.getById((long) marcado.get(0).getHorarioId());
 				marcadoReporte(listaReporte,listaMarcado,horarioModel);
+				for (int k = 0;k < listaReporte.size();k++ ) {
+					listaReporte.get(k).mostrar();
+				}
 				
 			}
 		}

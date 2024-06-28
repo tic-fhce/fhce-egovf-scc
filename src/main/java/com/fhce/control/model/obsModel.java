@@ -63,6 +63,10 @@ public class obsModel {
 	@Column
 	private int _16estado;
 	
+	@Column
+	private int _17tipo;
+	
+	
 
 	public Long getId() {
 		return id;
@@ -199,6 +203,12 @@ public class obsModel {
 	public void set_16estado(int _16estado) {
 		this._16estado = _16estado;
 	}
-	
-	
+
+	public int get_17tipo() {
+		return _17tipo;
+	}
+
+	public void set_17tipo(int _17tipo) {
+		this._17tipo = _17tipo;
+	}
 }
