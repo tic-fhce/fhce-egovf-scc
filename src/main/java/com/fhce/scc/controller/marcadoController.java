@@ -21,8 +21,8 @@ import com.fhce.scc.service.marcadoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/marcado") //develop
-@RequestMapping("/marcado") //develop
+@RequestMapping("fhce-egovf-scc/marcado") //develop
+//@RequestMapping("/marcado") //develop
 
 @RequiredArgsConstructor
 public class marcadoController {

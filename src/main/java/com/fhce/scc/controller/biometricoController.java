@@ -17,8 +17,8 @@ import com.fhce.scc.service.biometricoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/biometrico") //develop
-@RequestMapping("/biometrico") //develop
+@RequestMapping("fhce-egovf-scc/biometrico") //develop
+//@RequestMapping("/biometrico") //develop
 @RequiredArgsConstructor
 public class biometricoController {
 	

@@ -448,14 +448,14 @@ public class marcadoServiceImpl implements marcadoService{
 		
 		for(int i=0;i<listaTotal.size()-1;i++)
 		{
-			menor=listaTotal.get(i).getPena();
+			menor=listaTotal.get(i).getRetraso();
 			for(int j=i+1;j<listaTotal.size();j++) {
-				mayor=listaTotal.get(j).getPena();
+				mayor=listaTotal.get(j).getRetraso();
 				if(menor>mayor) {
 					aux=listaTotal.get(i);
 					listaTotal.set(i, listaTotal.get(j));
 					listaTotal.set(j, aux);
-					menor=listaTotal.get(i).getPena();
+					menor=listaTotal.get(i).getRetraso();
 				}
 			}
 		}

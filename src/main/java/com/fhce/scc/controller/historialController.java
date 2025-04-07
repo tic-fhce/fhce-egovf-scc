@@ -14,8 +14,8 @@ import com.fhce.scc.service.historialService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/historial") //develop
-@RequestMapping("/historial") //develop
+@RequestMapping("fhce-egovf-scc/historial") //develop
+//@RequestMapping("/historial") //develop
 @RequiredArgsConstructor
 public class historialController {
 	

@@ -15,7 +15,7 @@ public class CorsConfig {
         CorsConfiguration config = new CorsConfiguration();
         
         // Permitir solicitudes desde estos orígenes
-        config.setAllowedOrigins(List.of("http://localhost:4200", "http://192.168.1.1"));
+        config.setAllowedOrigins(List.of("http://localhost:4200", "http://192.168.31.34:8080"));
         
         // Métodos permitidos
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));

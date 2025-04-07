@@ -18,8 +18,8 @@ import com.fhce.scc.service.equipoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/equipo") //develop
-@RequestMapping("/equipo") //develop
+@RequestMapping("fhce-egovf-scc/equipo") //develop
+//@RequestMapping("/equipo") //develop
 @RequiredArgsConstructor
 public class equipoController {
 	

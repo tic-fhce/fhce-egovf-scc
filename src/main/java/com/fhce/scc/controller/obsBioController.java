@@ -14,8 +14,8 @@ import com.fhce.scc.service.obsBioService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/obsbio") //develop 
-@RequestMapping("/obsbio") //develop 
+@RequestMapping("fhce-egovf-scc/obsbio") //develop 
+//@RequestMapping("/obsbio") //develop 
 @RequiredArgsConstructor
 public class obsBioController {
 	private final obsBioService obsBioService;

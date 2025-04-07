@@ -19,14 +19,14 @@ import com.fhce.scc.service.obsService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/obs") //develop 
-@RequestMapping("/obs") //develop 
+@RequestMapping("fhce-egovf-scc/obs") //develop 
+//@RequestMapping("/obs") //develop 
 @RequiredArgsConstructor
 public class obsController {
 	private final obsService obsService;
 
 	@GetMapping("/getListaObs")
-	public ResponseEntity <List<obsDtoResponse>> getListaObs(@RequestParam (value="gestion") int gestion){
+	public ResponseEntity <List<obsDtoObj>> getListaObs(@RequestParam (value="gestion") int gestion){
 		try {
 			return new ResponseEntity<>(this.obsService.getListaObs(gestion),HttpStatus.OK);
 		}catch (Exception e) {
@@ -100,6 +100,14 @@ public class obsController {
 	public ResponseEntity <obsDtoResponse>updateObs(@RequestBody obsDtoObj obsDtoObj) {
 		try {
 			return new ResponseEntity<>(this.obsService.updateObs(obsDtoObj),HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}		
+	}
+	@PutMapping("/updateObsEmpleado")
+	public ResponseEntity <obsDtoResponse>updateObsEmpleado(@RequestBody obsDtoObj obsDtoObj) {
+		try {
+			return new ResponseEntity<>(this.obsService.updateObsEmpleado(obsDtoObj),HttpStatus.OK);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}		

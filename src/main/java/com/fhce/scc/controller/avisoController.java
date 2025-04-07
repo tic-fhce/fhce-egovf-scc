@@ -18,8 +18,8 @@ import com.fhce.scc.service.avisoService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/aviso") //develop
-@RequestMapping("/aviso") //develop
+@RequestMapping("fhce-egovf-scc/aviso") //develop
+//@RequestMapping("/aviso") //develop
 @RequiredArgsConstructor
 public class avisoController {
 	

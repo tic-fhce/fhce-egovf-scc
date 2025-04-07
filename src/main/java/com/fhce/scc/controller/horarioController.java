@@ -19,8 +19,8 @@ import com.fhce.scc.service.horarioService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-//@RequestMapping("fhce-egovf-scc/horario") //develop
-@RequestMapping("/horario") //develop
+@RequestMapping("fhce-egovf-scc/horario") //develop
+//@RequestMapping("/horario") //develop
 @RequiredArgsConstructor
 public class horarioController {
 	

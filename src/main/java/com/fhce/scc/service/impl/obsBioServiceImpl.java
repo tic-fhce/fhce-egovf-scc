@@ -23,8 +23,19 @@ public class obsBioServiceImpl implements obsBioService {
 	@Transactional 
 	public obsBioDtoResponse updateObsBio(obsBioDtoResponse obsBioDtoResponse) {
 		
-		obsBioModel obsBioModel = this.modelMapper.map(obsBioDtoResponse, obsBioModel.class);
+		obsBioModel obsBioModel = new obsBioModel();
+		obsBioModel.setId(obsBioDtoResponse.getId());
+		obsBioModel.setCif(obsBioDtoResponse.getCif());
+		obsBioModel.setIdObs(obsBioDtoResponse.getIdObs());
+		obsBioModel.setHoraEntrada(obsBioDtoResponse.getHoraEntrada());
+		obsBioModel.setHoraSalida(obsBioDtoResponse.getHoraSalida());
+		obsBioModel.setHEntrada(obsBioDtoResponse.getHentrada());
+		obsBioModel.setMEntrada(obsBioDtoResponse.getMentrada());
+		obsBioModel.setHSalida(obsBioDtoResponse.getHsalida());
+		obsBioModel.setMSalida(obsBioDtoResponse.getMsalida());
+		obsBioModel.setEstado(obsBioDtoResponse.getEstado());
 		this.obsBioDao.save(obsBioModel);
+		
 		return (this.modelMapper.map(obsBioModel, obsBioDtoResponse.class));
 	}
 
