@@ -1,8 +1,11 @@
 package com.fhce.scc.service.impl;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -98,38 +101,40 @@ public class marcadoServiceImpl implements marcadoService{
 		Long horario = (long) 0;
 		
 		List<historialModel>listaHistorial = this.historialDao.getHistorial(cif, gestion);
+		listaHistorial.sort(Comparator.comparing(historialModel::getMessalida));
 		
 		if(listaHistorial.size()==1) {
 			horario = listaHistorial.get(0).getHorario_id();
 		}
 		else {
-			int limite = 0;
-			Long horarioAux = (long) 0;
-			horario = listaHistorial.get(0).getHorario_id();
-			for(int i=1;i<listaHistorial.size();i++) {
-				if(listaHistorial.get(i).getMes()<mes)
-					horario = listaHistorial.get(i).getHorario_id();
-				if(listaHistorial.get(i).getMes() == mes) {
-					limite = listaHistorial.get(i).getDia();
-					horarioAux = listaHistorial.get(i).getHorario_id();
-				}
+			historialModel historialAux = null; 
+			Long[] meses = new Long[12];
+			Arrays.fill(meses, 0L);
+			
+			for (historialModel historial : listaHistorial) {
+			    int mesSalida = historial.getMessalida();
+			    Long horarioId = historial.getHorario_id();
+
+			    for (int j = 0; j < 12; j++) {
+			        if (j < mesSalida && meses[j] == 0L) {
+			            meses[j] = horarioId;
+			        }
+			    }
 			}
-			if(limite >0 && di == 0) {
-				di = 1;
-				df = limite -1;
+			horario = meses[mes-1];
+			di=0;
+			List<TuplaFecha> tuplas = new ArrayList<>();
+			for(int i=0;i<listaHistorial.size();i++) {
+				tuplas.add(new TuplaFecha(LocalDate.of(listaHistorial.get(i).getGestion(), listaHistorial.get(i).getMes(), listaHistorial.get(i).getDia()), LocalDate.of(listaHistorial.get(i).getGestionsalida(), listaHistorial.get(i).getMessalida(), listaHistorial.get(i).getDiasalida())));
+				if(listaHistorial.get(i).getHorario_id().longValue()==horario)
+					historialAux=listaHistorial.get(i);
 			}
-			else {
-				if(di>=limite && di >0 && limite >0)
-					horario = horarioAux;
-				if(df>=limite && df > 0 && di<limite && limite>0)
-					df = limite - 1 ;
-			}
+			RangoEnMes dias = obtenerDiasDelMes(tuplas,mes,gestion);
+			di=dias.diaInicio;
+			df=dias.diaFin;
 			
 		}
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$4"+horario);
-		System.out.println(cif+" "+horario+" "+gestion+" "+mes);
 		List<formatoReporteDtoResponse>listaReporte = getReporte(cif,horario,gestion,mes);
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ despues de  getReporteMes");
 		List<formatoReporteDtoResponse>reporteFinal= new ArrayList<formatoReporteDtoResponse>();
 		
 		int j=1;
@@ -390,12 +395,10 @@ public class marcadoServiceImpl implements marcadoService{
 		int antisipado=0;
 		int penalisacion=0;
 		int r[]=new int[4];
-		String lugar[] = new String[4];
 		String hora[] = new String[4];
 		int mayor=0;
 		int menor=0;
 		boolean ingreso=true;
-		boolean pena= true;
 		marcadoDtoTotalResponse aux;
 		
 		for(int i=0;i<listaBiometrico.size();i++) {
@@ -461,5 +464,50 @@ public class marcadoServiceImpl implements marcadoService{
 		}
 		return listaTotal;
 	}
+	
+	public static RangoEnMes obtenerDiasDelMes(List<TuplaFecha> tuplas, int mes, int anio) {
+        for (TuplaFecha tupla : tuplas) {
+            LocalDate inicio = tupla.inicio;
+            LocalDate fin = tupla.fin;
 
+            // Chequeamos si el mes y año está dentro de la tupla
+            LocalDate inicioMes = LocalDate.of(anio, mes, 1);
+            YearMonth ym = YearMonth.of(anio, mes);
+            LocalDate finMes = ym.atEndOfMonth();
+
+            // Si el rango del mes y el de la tupla se intersectan
+            if (!(fin.isBefore(inicioMes) || inicio.isAfter(finMes))) {
+                int diaInicio = Math.max(1, inicio.getMonthValue() == mes && inicio.getYear() == anio ? inicio.getDayOfMonth() : 1);
+                int diaFin = Math.min(ym.lengthOfMonth(), fin.getMonthValue() == mes && fin.getYear() == anio ? fin.getDayOfMonth() : ym.lengthOfMonth());
+                return new RangoEnMes(diaInicio, diaFin);
+            }
+        }
+
+        return null; // No se encontró rango para ese mes
+    }
+
+}
+/*Clases para obtener el rango de dias en los empleados que tienen mas de dos horarios en la gestion*/
+class RangoEnMes {
+    int diaInicio;
+    int diaFin;
+
+    RangoEnMes(int diaInicio, int diaFin) {
+        this.diaInicio = diaInicio;
+        this.diaFin = diaFin;
+    }
+
+    @Override
+    public String toString() {
+        return "Día inicio = " + diaInicio + ", Día fin = " + diaFin;
+    }
+}
+class TuplaFecha {
+    LocalDate inicio;
+    LocalDate fin;
+
+    TuplaFecha(LocalDate inicio, LocalDate fin) {
+        this.inicio = inicio;
+        this.fin = fin;
+    }
 }

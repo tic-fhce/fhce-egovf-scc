@@ -14,7 +14,6 @@ import com.fhce.scc.dao.horarioDao;
 import com.fhce.scc.model.biometricoModel;
 import com.fhce.scc.model.historialModel;
 import com.fhce.scc.model.horarioModel;
-import com.fhce.scc.obj.historialDtoRequest;
 import com.fhce.scc.obj.horarioDtoObj;
 import com.fhce.scc.obj.horarioDtoRequest;
 import com.fhce.scc.obj.horarioDtoResponse;
@@ -40,13 +39,14 @@ public class horarioServiceImpl implements horarioService{
 	}
 	@Transactional
 	public horarioDtoResponse addHorario(horarioDtoRequest horarioDtoRequest){
+		
 		LocalDate fecha = LocalDate.parse(horarioDtoRequest.getFecha());
 		LocalDate salida = LocalDate.parse(horarioDtoRequest.getSalida());
 		
 		horarioModel horarioModel = this.modelMapper.map(horarioDtoRequest, horarioModel.class);
 		horarioModel aux = this.horarioDao.save(horarioModel);
 		
-		
+		//actualizamos las fechas en el historial
 		historialModel historialModel = new historialModel();
 		historialModel.setCif(horarioDtoRequest.getCif());
 		historialModel.setHorario_id(aux.getId());
@@ -59,8 +59,8 @@ public class horarioServiceImpl implements horarioService{
 		
 		this.historialDao.save(historialModel);
 		
+		// cambiamos los id de horarios a los biometricos
 		List<biometricoModel>lista = this.biometricoDao.getPerfil(horarioDtoRequest.getCif());
-		
 		
 		for(int i=0;i<lista.size();i++) {
 			lista.get(i).setHorario_id( Math.toIntExact(aux.getId()));
@@ -140,10 +140,10 @@ public class horarioServiceImpl implements horarioService{
 				}
 			}
 		}
-		for(int i=1;i<listaHorario.size();i++)
+		/*for(int i=1;i<listaHorario.size();i++)
 		{
 			listaHorario.get(i-1).setValido(listaHorario.get(i).getFecha());
-		}
+		}*/
 		
 		return(listaHorario);
 	}
