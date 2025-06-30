@@ -112,9 +112,17 @@ public class biometricoServiceImpl implements biometricoService{
 	
 	@Transactional
 	public biometricoDtoResponse updateBiometrico(biometricoDtoResponse biometricoDtoResponse){
-		biometricoModel biometricoModel = this.modelMapper.map(biometricoDtoResponse,biometricoModel.class);
-		this.biometricoDao.save(biometricoModel);
-		return (this.modelMapper.map(biometricoModel, biometricoDtoResponse.class));
+		
+		List<biometricoModel> lista = this.biometricoDao.getPerfil(biometricoDtoResponse.getCif());
+		for(int i=0;i<lista.size();i++) {
+			lista.get(i).setEstado(biometricoDtoResponse.getEstado());
+			lista.get(i).setHorario_id(biometricoDtoResponse.getHorario_id());
+			lista.get(i).setLugar(biometricoDtoResponse.getLugar());
+			lista.get(i).setId_tipo(biometricoDtoResponse.getId_tipo());
+			lista.get(i).setDetalle(biometricoDtoResponse.getDetalle());
+			this.biometricoDao.save(lista.get(i));
+		}
+		return (this.modelMapper.map(lista.get(0), biometricoDtoResponse.class));
 	}
 	
 	@Transactional
