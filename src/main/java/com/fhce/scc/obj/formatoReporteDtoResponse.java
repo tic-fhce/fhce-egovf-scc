@@ -1,8 +1,10 @@
 package com.fhce.scc.obj;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
+import com.fhce.scc.model.obsBioModel;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -80,6 +82,7 @@ public class formatoReporteDtoResponse {
 		int marcado[]=new int[4];
 		int ingreso[]=new int[4];
 		boolean continuo=false;
+		boolean esContinuoIngresoDia = false;
 		
 		// ordemanos las horas 
 		marcadoDtoResponse aux;
@@ -115,7 +118,88 @@ public class formatoReporteDtoResponse {
 		}
 		if(suma==0)
 			this.marcado=false;
-		
+		// --- BLOQUE PARA GENERAR FICTICIOS SI NO HAY MARCADOS REALES PERO SÍ OBSERVACIONES ---
+if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
+    for (int j = 0; j < this.obsDtoReporte.size(); j++) {
+        switch(this.obsDtoReporte.get(j).getTipo()) {
+            case ("Permiso Medico"):
+                obsBioModel obs = this.obsDtoReporte.get(j).getObsBioModel();
+
+                // Permiso Médico en Entrada Mañana
+                marcadoDtoResponse permisoEntradaM = new marcadoDtoResponse();
+                permisoEntradaM.setId(0L);
+                permisoEntradaM.setUid(0L);
+                permisoEntradaM.setUser_id(0L);
+                permisoEntradaM.setFecha(this.obsDtoReporte.get(j).getFecha());
+                permisoEntradaM.setHora(obs.getHoraEntrada());
+                permisoEntradaM.setGestion(0);
+                permisoEntradaM.setMes(0);
+                permisoEntradaM.setDia(0);
+                permisoEntradaM.setH(obs.getHEntrada());
+                permisoEntradaM.setM(obs.getMEntrada());
+                permisoEntradaM.setPunch(0);
+                permisoEntradaM.setRstatus(0);
+                permisoEntradaM.setLugar("P. Medico");
+                entradaManana.add(permisoEntradaM);
+
+                // Permiso Médico en Salida Mañana
+                marcadoDtoResponse permisoSalidaM = new marcadoDtoResponse();
+                permisoSalidaM.setId(0L);
+                permisoSalidaM.setUid(0L);
+                permisoSalidaM.setUser_id(0L);
+                permisoSalidaM.setFecha(this.obsDtoReporte.get(j).getFecha());
+                permisoSalidaM.setHora(obs.getHoraSalida());
+                permisoSalidaM.setGestion(0);
+                permisoSalidaM.setMes(0);
+                permisoSalidaM.setDia(0);
+                permisoSalidaM.setH(obs.getHSalida());
+                permisoSalidaM.setM(obs.getMSalida());
+                permisoSalidaM.setPunch(0);
+                permisoSalidaM.setRstatus(0);
+                permisoSalidaM.setLugar("P. Medico");
+                salidaManana.add(permisoSalidaM);
+
+                // Permiso Médico en Entrada Tarde
+                marcadoDtoResponse permisoEntradaT = new marcadoDtoResponse();
+                permisoEntradaT.setId(0L);
+                permisoEntradaT.setUid(0L);
+                permisoEntradaT.setUser_id(0L);
+                permisoEntradaT.setFecha(this.obsDtoReporte.get(j).getFecha());
+                permisoEntradaT.setHora(obs.getHoraEntrada());
+                permisoEntradaT.setGestion(0);
+                permisoEntradaT.setMes(0);
+                permisoEntradaT.setDia(0);
+                permisoEntradaT.setH(obs.getHEntrada());
+                permisoEntradaT.setM(obs.getMEntrada());
+                permisoEntradaT.setPunch(0);
+                permisoEntradaT.setRstatus(0);
+                permisoEntradaT.setLugar("P. Medico");
+                entradaTarde.add(permisoEntradaT);
+
+                // Permiso Médico en Salida Tarde
+                marcadoDtoResponse permisoSalidaT = new marcadoDtoResponse();
+                permisoSalidaT.setId(0L);
+                permisoSalidaT.setUid(0L);
+                permisoSalidaT.setUser_id(0L);
+                permisoSalidaT.setFecha(this.obsDtoReporte.get(j).getFecha());
+                permisoSalidaT.setHora(obs.getHoraSalida());
+                permisoSalidaT.setGestion(0);
+                permisoSalidaT.setMes(0);
+                permisoSalidaT.setDia(0);
+                permisoSalidaT.setH(obs.getHSalida());
+                permisoSalidaT.setM(obs.getMSalida());
+                permisoSalidaT.setPunch(0);
+                permisoSalidaT.setRstatus(0);
+                permisoSalidaT.setLugar("P. Medico");
+                salidaTarde.add(permisoSalidaT);
+
+                break;
+            // Aquí podrías agregar otros casos si en el futuro lo necesitas
+        }
+    }
+}
+// --- FIN BLOQUE FICTICIOS ---
+
 		/* designamos los marcados en la lista para corelacionar con los horarios de marcados de los empleados*/
 		tolerancia = 5;
 		for(int i=0;i<this.marcadoDtoResponse.size();i++) {
@@ -146,6 +230,7 @@ public class formatoReporteDtoResponse {
 			}
 			else {/*sis exsisten observaciones verificamos cual de ellos es */
 				
+
 				for (int j=0;j<this.obsDtoReporte.size();j++) {
 					marcadoDtoResponse auxMarcado;
 					hEntrada = this.obsDtoReporte.get(j).getObsBioModel().getHEntrada();
@@ -170,40 +255,141 @@ public class formatoReporteDtoResponse {
 							continuo=true;
 							break;
 							
-						case("continuoingreso"):
-							/*si la observacion es continuo e ingreso modificamos el ingreso y solo traemos la entrada*/
-							if(h < marcado[0]+100) {
-								if(marcado[0]<(hEntrada*100+mEntrada)) {
-									auxT = 40 * (hEntrada - this.marcadoDtoResponse.get(i).getH());
-									tolerancia = (hEntrada*100+mEntrada) - (marcado[0]+auxT);
+						case ("continuoingreso"):
+							tolerancia = 30;
+
+							marcadoDtoResponse marcadoEntrada = null;
+							marcadoDtoResponse marcadoSalida = null;
+
+							for (marcadoDtoResponse marcadoAux : this.marcadoDtoResponse) {
+								int minutos = marcadoAux.getH() * 60 + marcadoAux.getM();
+								if (marcadoEntrada == null || minutos < (marcadoEntrada.getH() * 60 + marcadoEntrada.getM())) {
+									marcadoEntrada = marcadoAux;
 								}
-								else {
-									tolerancia = (hEntrada*100+mEntrada) - marcado[0] ; 
+								if (marcadoSalida == null || minutos > (marcadoSalida.getH() * 60 + marcadoSalida.getM())) {
+									marcadoSalida = marcadoAux;
 								}
-								entradaManana.add(this.marcadoDtoResponse.get(i));
-								
 							}
-							if(h>(hSalida*100+mSalida)-100) {
-								salidaTarde.add(this.marcadoDtoResponse.get(i));
+
+							int retrasoEntrada = 0;
+							int minutosToleranciaUsados = 0;
+							int entradaProgMin = hEntrada * 60 + mEntrada;
+
+							if (marcadoEntrada != null) {
+								int marcadoEntradaMin = marcadoEntrada.getH() * 60 + marcadoEntrada.getM();
+								minutosToleranciaUsados = marcadoEntradaMin - entradaProgMin;
+								if (minutosToleranciaUsados < 0) minutosToleranciaUsados = 0;
+
+								if (minutosToleranciaUsados > tolerancia) {
+									retrasoEntrada = minutosToleranciaUsados - tolerancia;
+									minutosToleranciaUsados = tolerancia;
+								} else {
+									retrasoEntrada = 0;
+								}
+								entradaManana.add(marcadoEntrada);
 							}
-							this.turnoB[1]="continuo";
-							this.turnoB[2]="continuo";
-							continuo=true;
+
+							int salidaProgMin = hSalida * 60 + mSalida;
+							int salidaRealPermitidaMin = salidaProgMin + minutosToleranciaUsados;
+							int anticipadoSalida = 0;
+
+							int salidaHora = salidaRealPermitidaMin / 60;
+							int salidaMin = salidaRealPermitidaMin % 60;
+							this.turnoB[3] = String.format("%02d:%02d", salidaHora, salidaMin);
+
+							if (marcadoSalida != null) {
+								int marcadoSalidaMin = marcadoSalida.getH() * 60 + marcadoSalida.getM();
+								if (marcadoSalidaMin < salidaRealPermitidaMin) {
+									anticipadoSalida = salidaRealPermitidaMin - marcadoSalidaMin;
+								} else {
+									anticipadoSalida = 0;
+								}
+								salidaTarde.add(marcadoSalida);
+							}
+
+							this.retraso[0] = retrasoEntrada;
+							this.retraso[3] = anticipadoSalida;
+
+							this.turnoB[1] = "continuo";
+							this.turnoB[2] = "continuo";
+							continuo = true;
+							esContinuoIngresoDia = true;
+							break;
+				
+						
+						case ("Permiso Medico"):
+							obsBioModel obs = this.obsDtoReporte.get(j).getObsBioModel();
+
+							// Permiso Médico en Entrada Mañana
+							marcadoDtoResponse permisoEntradaM = new marcadoDtoResponse();
+							permisoEntradaM.setId(0L);
+							permisoEntradaM.setUid(0L);
+							permisoEntradaM.setUser_id(0L);
+							permisoEntradaM.setFecha(this.obsDtoReporte.get(j).getFecha());
+							permisoEntradaM.setHora(obs.getHoraEntrada());
+							permisoEntradaM.setGestion(0);
+							permisoEntradaM.setMes(0);
+							permisoEntradaM.setDia(0);
+							permisoEntradaM.setH(obs.getHEntrada());
+							permisoEntradaM.setM(obs.getMEntrada());
+							permisoEntradaM.setPunch(0);
+							permisoEntradaM.setRstatus(0);
+							permisoEntradaM.setLugar("P. Medico");
+							entradaManana.add(permisoEntradaM);
+
+							// Permiso Médico en Salida Mañana
+							marcadoDtoResponse permisoSalidaM = new marcadoDtoResponse();
+							permisoSalidaM.setId(0L);
+							permisoSalidaM.setUid(0L);
+							permisoSalidaM.setUser_id(0L);
+							permisoSalidaM.setFecha(this.obsDtoReporte.get(j).getFecha());
+							permisoSalidaM.setHora(obs.getHoraSalida());
+							permisoSalidaM.setGestion(0);
+							permisoSalidaM.setMes(0);
+							permisoSalidaM.setDia(0);
+							permisoSalidaM.setH(obs.getHSalida());
+							permisoSalidaM.setM(obs.getMSalida());
+							permisoSalidaM.setPunch(0);
+							permisoSalidaM.setRstatus(0);
+							permisoSalidaM.setLugar("P. Medico");
+							salidaManana.add(permisoSalidaM);
+
+							// Permiso Médico en Entrada Tarde
+							marcadoDtoResponse permisoEntradaT = new marcadoDtoResponse();
+							permisoEntradaT.setId(0L);
+							permisoEntradaT.setUid(0L);
+							permisoEntradaT.setUser_id(0L);
+							permisoEntradaT.setFecha(this.obsDtoReporte.get(j).getFecha());
+							permisoEntradaT.setHora(obs.getHoraEntrada());
+							permisoEntradaT.setGestion(0);
+							permisoEntradaT.setMes(0);
+							permisoEntradaT.setDia(0);
+							permisoEntradaT.setH(obs.getHEntrada());
+							permisoEntradaT.setM(obs.getMEntrada());
+							permisoEntradaT.setPunch(0);
+							permisoEntradaT.setRstatus(0);
+							permisoEntradaT.setLugar("P. Medico");
+							entradaTarde.add(permisoEntradaT);
+
+							// Permiso Médico en Salida Tarde
+							marcadoDtoResponse permisoSalidaT = new marcadoDtoResponse();
+							permisoSalidaT.setId(0L);
+							permisoSalidaT.setUid(0L);
+							permisoSalidaT.setUser_id(0L);
+							permisoSalidaT.setFecha(this.obsDtoReporte.get(j).getFecha());
+							permisoSalidaT.setHora(obs.getHoraSalida());
+							permisoSalidaT.setGestion(0);
+							permisoSalidaT.setMes(0);
+							permisoSalidaT.setDia(0);
+							permisoSalidaT.setH(obs.getHSalida());
+							permisoSalidaT.setM(obs.getMSalida());
+							permisoSalidaT.setPunch(0);
+							permisoSalidaT.setRstatus(0);
+							permisoSalidaT.setLugar("P. Medico");
+							salidaTarde.add(permisoSalidaT);
+
 							break;
 
-						case ("Permiso Medico"):
-							// Genero un marcado “ficticio” solo para la entrada de mañana,
-							// pero con etiqueta P. Medico en lugar de Entrada M.
-							marcadoDtoResponse permiso = new marcadoDtoResponse();
-							permiso.setHora(this.obsDtoReporte.get(j).getObsBioModel().getHoraEntrada());
-							permiso.setFecha(this.obsDtoReporte.get(j).getFecha());
-							permiso.setLugar("P. Medico");     // aquí pongo P. Medico
-							permiso.setH(hEntrada);
-							permiso.setM(mEntrada);
-							permiso.setId(0L);
-							entradaManana.add(permiso);
-							// No agregamos salidaMañana ni demás marcados automáticos
-							break;
 
 						case("Entrada M."):
 							/*si el empleado no marco el ingreso se crea el ingreso deacuerdo a su observacion*/
@@ -336,6 +522,7 @@ public class formatoReporteDtoResponse {
 						//permiso medico funciona como asueto 
 						//asueto 
 					}
+				
 				}
 			}
 		}
@@ -372,7 +559,9 @@ public class formatoReporteDtoResponse {
 			this.hora[0] = aux.getHora();
 			this.lugar[0] = aux.getLugar()+" uid:"+aux.getId();
 			
-			this.retraso[0] = retraso(h,marcado[0]+tolerancia,aux,ingreso[0]);
+			if (!esContinuoIngresoDia)
+        		this.retraso[0] = retraso(h, marcado[0] + tolerancia, aux, ingreso[0]);
+			
 		}
 		else {
 			continuo(0,this.turnoB[0]);
@@ -408,15 +597,35 @@ public class formatoReporteDtoResponse {
 			h=(aux.getH()*100)+aux.getM();
 			this.hora[3]=aux.getHora();
 			this.lugar[3]=aux.getLugar()+" uid:"+aux.getId();
-			if(continuo)// continuo = true
-				this.retraso[3]=0;
-			else
+			if(continuo) {
+				// SOLO pon en cero si NO es continuoingreso
+				if (!esContinuoIngresoDia) {
+					this.retraso[3]=0;
+				}
+				// Si es continuoingreso, respeta el valor calculado en el switch
+			} else {
 				this.retraso[3]=anticipado(h,marcado[3],aux,ingreso[3]);
-		}
-		else {
+			}
+		} else {
 			continuo(3,this.turnoB[3]);
 		}
+
+
+		if (esDiaPermisoMedico()) {
+			Arrays.fill(this.retraso, 0);
+		}
+
 	}
+
+	private boolean esDiaPermisoMedico() {
+		for (int j = 0; j < this.obsDtoReporte.size(); j++) {
+			if ("Permiso Medico".equals(this.obsDtoReporte.get(j).getTipo())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	
 	//Segmento modular de Continuo
 	public void continuo(int index,String c) {
