@@ -135,17 +135,15 @@ public class biometricoServiceImpl implements biometricoService{
 	@Transactional
 	public List<biometricoDtoResponse> updateTipo(Long cif, Long tipo){
 		
-		List<biometricoDtoResponse>biometricos = this.biometricoDao.getPerfil(cif).stream()
-				.map(biometrico -> this.modelMapper.map(biometrico, biometricoDtoResponse.class))
-				.collect(Collectors.toList());
+		List<biometricoModel>biometricos = this.biometricoDao.getPerfil(cif);
 		
-		biometricoDtoResponse aux;
+		biometricoModel aux;
 		List<biometricoDtoResponse> response = new ArrayList<biometricoDtoResponse>();
 		for(int i=0;i<biometricos.size();i++) {
 			aux = biometricos.get(i);
 			aux.setId_tipo(tipo);
-			response.add(aux);
-			this.biometricoDao.save(this.modelMapper.map(aux, biometricoModel.class));
+			response.add(this.modelMapper.map(aux, biometricoDtoResponse.class));
+			this.biometricoDao.save(aux);
 		}
 		return (response);
 	}
