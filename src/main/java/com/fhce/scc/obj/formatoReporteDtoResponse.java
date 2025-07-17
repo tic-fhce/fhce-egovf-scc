@@ -481,23 +481,34 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
 							break;
 						
 						case("tolerancia"):
-							/*si el empelado tiene una tolerancia en el ingreso*/
-							if(h < marcado[0]+100) {
-								auxT = 40 * (hEntrada - this.marcadoDtoResponse.get(i).getH());
-								tolerancia = (hEntrada*100+mEntrada) - (marcado[0]+auxT);
-								entradaManana.add(this.marcadoDtoResponse.get(i));
-								marcado[0]=(hEntrada*100)+mEntrada;
+							int toleranciaPermitida = 15;
+							
+							int horaEntradaProg = hEntrada * 60 + mEntrada;
+							int horaMarcada = this.marcadoDtoResponse.get(i).getH() * 60 + this.marcadoDtoResponse.get(i).getM();
+							
+							int minutosRetraso = horaMarcada - horaEntradaProg;
+
+							if (minutosRetraso <= toleranciaPermitida && minutosRetraso >= 0) {
+								this.retraso[0] = 0;
+							} else if (minutosRetraso > toleranciaPermitida) {
+								this.retraso[0] = minutosRetraso - toleranciaPermitida;
+							} else {
+								this.retraso[0] = 0;
 							}
-							if(marcado[1]-100<h && h<=marcado[1]+100) {
+							
+							entradaManana.add(this.marcadoDtoResponse.get(i));
+
+							if(marcado[1]-100 < h && h <= marcado[1]+100) {
 								salidaManana.add(this.marcadoDtoResponse.get(i));
 							}
-							if(marcado[2]-90<h && h<marcado[2]+100) {
+							if(marcado[2]-90 < h && h < marcado[2]+100) {
 								entradaTarde.add(this.marcadoDtoResponse.get(i));
 							}
-							if(h>marcado[3]-100) {
+							if(h > marcado[3]-100) {
 								salidaTarde.add(this.marcadoDtoResponse.get(i));
 							}
 							break;
+
 						
 						case("extraordinario"):
 							marcado[0]=Integer.parseInt(this.obsDtoReporte.get(j).getObsBioModel().getHoraEntrada().replace(":", ""));
