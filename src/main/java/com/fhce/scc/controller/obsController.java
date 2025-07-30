@@ -62,7 +62,7 @@ public class obsController {
 	@PostMapping("/addObsAll")
 	public ResponseEntity<obsDtoObj>  addObsAll(@RequestBody obsDtoObj obsDtoObj) {
 		try {
-			return new ResponseEntity<>(this.obsService.addObsAll(obsDtoObj),HttpStatus.OK);
+			return new ResponseEntity<>(this.obsService.addObsAll(obsDtoObj),HttpStatus.CREATED);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

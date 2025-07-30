@@ -31,5 +31,6 @@ public class obsDtoObj {
 	private int mSalida;
 	private String url;
 	private int estado;
+	private int idtipo;
 
 }

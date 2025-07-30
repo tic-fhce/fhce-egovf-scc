@@ -62,7 +62,7 @@ public class obsServiceImpl implements obsService {
 		obsModel.setImagen(obsDtoObj.getImagen());
 		obsModel.setTipo(obsDtoObj.getTipo());
 		obsModel.setUrl(obsDtoObj.getUrl());
-		obsModel.setTipoId(0);
+		obsModel.setTipoId(obsDtoObj.getIdtipo());
 		this.obsDao.save(obsModel);
 		
 		// Agregamos las Observaciones a todos los usuarios que cumplen las condiciones
@@ -121,7 +121,7 @@ public class obsServiceImpl implements obsService {
 		obsModel.setImagen(obsDtoObj.getImagen());
 		obsModel.setTipo(obsDtoObj.getTipo());
 		obsModel.setUrl(obsDtoObj.getUrl());
-		obsModel.setTipoId(0);
+		obsModel.setTipoId(obsDtoObj.getIdtipo());
 		this.obsDao.save(obsModel);
 		
 		// Agregamos las Observaciones a todos los usuarios que cumplen las condiciones
@@ -163,7 +163,6 @@ public class obsServiceImpl implements obsService {
 			obsBioModel.get(i).setMSalida(obsDtoObj.getMSalida());
 			this.obsBioDao.save(obsBioModel.get(i));
 		}
-		System.out.println("$$$$$$$$$$$$$" + obsBioModel.size()+"----"+cif.size());
 		// agregamos a los que faltan
 		List<Long>obsBM = new ArrayList<Long>();
 		for(int i=0; i<obsBioModel.size();i++) {
@@ -172,7 +171,6 @@ public class obsServiceImpl implements obsService {
 		
 		for(int i=0;i<cif.size();i++) {
 			if(!obsBM.contains(cif.get(i))) {
-				System.out.println(cif.get(i));
 				obsBioModel obsBio = new obsBioModel();
 				
 				obsBio.setCif(cif.get(i));
@@ -236,7 +234,7 @@ public class obsServiceImpl implements obsService {
 		obsModel.setImagen(obsDtoObj.getImagen());
 		obsModel.setTipo(obsDtoObj.getTipo());
 		obsModel.setUrl(obsDtoObj.getUrl());
-		obsModel.setTipoId(0);
+		obsModel.setTipoId(obsDtoObj.getIdtipo());
 		this.obsDao.save(obsModel);
 		// Agregamos las Observaciones a todos los usuarios que cumplen las condiciones
 		
@@ -314,7 +312,8 @@ public class obsServiceImpl implements obsService {
 					obsBio.get(j).getHSalida(),
 					obsBio.get(j).getMSalida(),
 					observaciones.get(i).getUrl(),
-					obsBio.get(j).getEstado()));
+					obsBio.get(j).getEstado(),
+					observaciones.get(i).getTipoId()));
 				}
 			}
 		}	
@@ -388,7 +387,8 @@ public class obsServiceImpl implements obsService {
 				obsBio.get(j).getHSalida(),
 				obsBio.get(j).getMSalida(),
 				observaciones.get(i).getUrl(),
-				obsBio.get(j).getEstado()));
+				obsBio.get(j).getEstado(),
+				observaciones.get(i).getTipoId()));
 			}
 		}
 		return (obsDtoObj);
@@ -423,35 +423,38 @@ public class obsServiceImpl implements obsService {
 				obsBio.get(j).getHSalida(),
 				obsBio.get(j).getMSalida(),
 				observaciones.get(i).getUrl(),
-				obsBio.get(j).getEstado()));
+				obsBio.get(j).getEstado(),
+				observaciones.get(i).getTipoId()));
 			}
 		}
 		return (obsDtoObj);
 	}
 	@Transactional 
 	public obsDtoResponse updateObsEmpleado(obsDtoObj obsDtoObj) {
-		
-		//Modificamos la Observacion
 		obsModel obsModel = new obsModel();
-		obsModel.setId(obsDtoObj.getIdObs());
-		obsModel.setUidObs(obsDtoObj.getUidobs());
-		obsModel.setFechaInicio(obsDtoObj.getFechainicio());
-		obsModel.setFechaFin(obsDtoObj.getFechafin());
-		obsModel.setGestion(obsDtoObj.getGestion());
-		obsModel.setMes(obsDtoObj.getMes());
-		obsModel.setDi(obsDtoObj.getDi());
-		obsModel.setDf(obsDtoObj.getDf());
-		obsModel.setDetalle(obsDtoObj.getDetalle());
-		obsModel.setImagen(obsDtoObj.getImagen());
-		obsModel.setTipo(obsDtoObj.getTipo());
-		obsModel.setUrl(obsDtoObj.getUrl());
-		obsModel.setTipoId(0);
-		this.obsDao.save(obsModel);
+		//Modificamos la Observacion
+		if(obsDtoObj.getIdtipo()==0) {
+			obsModel.setId(obsDtoObj.getIdObs());
+			obsModel.setUidObs(obsDtoObj.getUidobs());
+			obsModel.setFechaInicio(obsDtoObj.getFechainicio());
+			obsModel.setFechaFin(obsDtoObj.getFechafin());
+			obsModel.setGestion(obsDtoObj.getGestion());
+			obsModel.setMes(obsDtoObj.getMes());
+			obsModel.setDi(obsDtoObj.getDi());
+			obsModel.setDf(obsDtoObj.getDf());
+			obsModel.setDetalle(obsDtoObj.getDetalle());
+			obsModel.setImagen(obsDtoObj.getImagen());
+			obsModel.setTipo(obsDtoObj.getTipo());
+			obsModel.setUrl(obsDtoObj.getUrl());
+			obsModel.setTipoId(obsDtoObj.getIdtipo());
+			this.obsDao.save(obsModel);
+		}
+		
 		
 		obsBioModel obsBioModel = new obsBioModel();
 		
 		obsBioModel.setId(obsDtoObj.getId());
-		obsBioModel.setIdObs(obsModel.getId());
+		obsBioModel.setIdObs(obsDtoObj.getIdObs());
 		obsBioModel.setCif(obsDtoObj.getCif());
 		obsBioModel.setHoraEntrada(obsDtoObj.getHoraEntrada());
 		obsBioModel.setHEntrada(obsDtoObj.getHEntrada());
