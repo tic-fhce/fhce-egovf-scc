@@ -3,6 +3,7 @@ package com.fhce.scc.obj;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Comparator;
 
 import com.fhce.scc.model.obsBioModel;
 
@@ -125,7 +126,6 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
             case ("Permiso Medico"):
                 obsBioModel obs = this.obsDtoReporte.get(j).getObsBioModel();
 
-                // Permiso Médico en Entrada Mañana
                 marcadoDtoResponse permisoEntradaM = new marcadoDtoResponse();
                 permisoEntradaM.setId(0L);
                 permisoEntradaM.setUid(0L);
@@ -142,7 +142,6 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
                 permisoEntradaM.setLugar("P. Medico");
                 entradaManana.add(permisoEntradaM);
 
-                // Permiso Médico en Salida Mañana
                 marcadoDtoResponse permisoSalidaM = new marcadoDtoResponse();
                 permisoSalidaM.setId(0L);
                 permisoSalidaM.setUid(0L);
@@ -159,7 +158,6 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
                 permisoSalidaM.setLugar("P. Medico");
                 salidaManana.add(permisoSalidaM);
 
-                // Permiso Médico en Entrada Tarde
                 marcadoDtoResponse permisoEntradaT = new marcadoDtoResponse();
                 permisoEntradaT.setId(0L);
                 permisoEntradaT.setUid(0L);
@@ -176,7 +174,6 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
                 permisoEntradaT.setLugar("P. Medico");
                 entradaTarde.add(permisoEntradaT);
 
-                // Permiso Médico en Salida Tarde
                 marcadoDtoResponse permisoSalidaT = new marcadoDtoResponse();
                 permisoSalidaT.setId(0L);
                 permisoSalidaT.setUid(0L);
@@ -194,7 +191,7 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
                 salidaTarde.add(permisoSalidaT);
 
                 break;
-            // Aquí podrías agregar otros casos si en el futuro lo necesitas
+            
         }
     }
 }
@@ -240,27 +237,28 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
 					
 					switch(this.obsDtoReporte.get(j).getTipo()) {
 						
+
 						case("continuo"):
-							/*sis la observacion es continuo solo tomamos en cuentas las salidas*/
-							if(h < marcado[0]+100) {
-								/*si la hora en h (marcado) es menor al marcado[0] + 100 es de ingreso */
-								entradaManana.add(this.marcadoDtoResponse.get(i));
+							if (this.marcadoDtoResponse != null && !this.marcadoDtoResponse.isEmpty()) {
+								this.marcadoDtoResponse.sort(Comparator.comparingInt(m -> m.getH() * 60 + m.getM()));
+
+								entradaManana.add(this.marcadoDtoResponse.get(0));
+
+								salidaTarde.add(this.marcadoDtoResponse.get(this.marcadoDtoResponse.size() - 1));
 							}
-							if(h>(hSalida*100+mSalida)-100) {
-								/*preguntamos si h(marcado) es mayor a  hSalida de la observacion - 100 para registrarlo en el reporte*/
-								salidaTarde.add(this.marcadoDtoResponse.get(i));
-							}
-							this.turnoB[1]="continuo";
-							this.turnoB[2]="continuo";
-							continuo=true;
+
+							this.turnoB[1] = "continuo";
+							this.turnoB[2] = "continuo";
+							continuo = true;
 							break;
-							
+
 						case ("continuoingreso"):
 							tolerancia = 30;
 
 							marcadoDtoResponse marcadoEntrada = null;
 							marcadoDtoResponse marcadoSalida = null;
 
+							// encontrar el marcado más temprano como entrada y más tarde como salida
 							for (marcadoDtoResponse marcadoAux : this.marcadoDtoResponse) {
 								int minutos = marcadoAux.getH() * 60 + marcadoAux.getM();
 								if (marcadoEntrada == null || minutos < (marcadoEntrada.getH() * 60 + marcadoEntrada.getM())) {
@@ -275,6 +273,7 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
 							int minutosToleranciaUsados = 0;
 							int entradaProgMin = hEntrada * 60 + mEntrada;
 
+							// calcular retraso respecto a la hora programada
 							if (marcadoEntrada != null) {
 								int marcadoEntradaMin = marcadoEntrada.getH() * 60 + marcadoEntrada.getM();
 								minutosToleranciaUsados = marcadoEntradaMin - entradaProgMin;
@@ -289,6 +288,7 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
 								entradaManana.add(marcadoEntrada);
 							}
 
+							//calcular la salida permitida y si hubo salida anticipada
 							int salidaProgMin = hSalida * 60 + mSalida;
 							int salidaRealPermitidaMin = salidaProgMin + minutosToleranciaUsados;
 							int anticipadoSalida = 0;
@@ -306,7 +306,7 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
 								}
 								salidaTarde.add(marcadoSalida);
 							}
-
+							
 							this.retraso[0] = retrasoEntrada;
 							this.retraso[3] = anticipadoSalida;
 
@@ -315,9 +315,8 @@ if(this.marcadoDtoResponse.size() == 0 && this.obsDtoReporte.size() > 0) {
 							continuo = true;
 							esContinuoIngresoDia = true;
 							break;
-				
-						
-						case ("Permiso Medico"):
+
+						case("Permiso Medico"):
 							obsBioModel obs = this.obsDtoReporte.get(j).getObsBioModel();
 
 							// Permiso Médico en Entrada Mañana
