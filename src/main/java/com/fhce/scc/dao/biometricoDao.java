@@ -15,8 +15,11 @@ public interface biometricoDao extends JpaRepository<biometricoModel,Long>{
 	@Query(value = "select * from biometrico where _03cif>0",nativeQuery=true)
 	List<biometricoModel>listarEgovf();
 	
-	@Query(value = "select * from biometrico where _03cif=?",nativeQuery=true)
+	@Query(value = "select * from biometrico where _03cif=? ",nativeQuery=true)
 	List<biometricoModel>getPerfil(Long cif);
+	
+	@Query(value = "select * from biometrico where id=?",nativeQuery=true)
+	biometricoModel getId(Long id);
 	
 	@Query(value = "select * from biometrico where _07id_tipo=? and _03cif>0 and _04estado=1",nativeQuery=true)
 	List<biometricoModel>listarBiometricoTipo(Long idtipo);

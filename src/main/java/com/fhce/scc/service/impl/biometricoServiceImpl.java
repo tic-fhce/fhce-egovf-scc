@@ -31,7 +31,7 @@ public class biometricoServiceImpl implements biometricoService{
 	}
 	
 	@Transactional
-	public List<biometricoDtoResponse> listarCifCero(){
+	public List<biometricoDtoResponse> getListarCifCero(){
 		List<biometricoDtoResponse> biometricos = this.biometricoDao.listarCifCero().stream()
 		        .map(biometrico -> this.modelMapper.map(biometrico, biometricoDtoResponse.class))
 		        .collect(Collectors.toList());
@@ -117,12 +117,22 @@ public class biometricoServiceImpl implements biometricoService{
 		for(int i=0;i<lista.size();i++) {
 			lista.get(i).setEstado(biometricoDtoResponse.getEstado());
 			lista.get(i).setHorario_id(biometricoDtoResponse.getHorario_id());
-			lista.get(i).setLugar(biometricoDtoResponse.getLugar());
 			lista.get(i).setId_tipo(biometricoDtoResponse.getId_tipo());
-			lista.get(i).setDetalle(biometricoDtoResponse.getDetalle());
 			this.biometricoDao.save(lista.get(i));
 		}
 		return (this.modelMapper.map(lista.get(0), biometricoDtoResponse.class));
+	}
+	
+	@Transactional
+	public biometricoDtoResponse updateBiometricoCif(biometricoDtoResponse biometricoDtoResponse){
+		
+		biometricoModel biometricoModel = this.biometricoDao.getId(biometricoDtoResponse.getId());
+		biometricoModel.setCif(biometricoDtoResponse.getCif());
+		biometricoModel.setSexo(biometricoDtoResponse.getSexo());
+		biometricoModel.setId_tipo(biometricoDtoResponse.getId_tipo());
+		this.biometricoDao.save(biometricoModel);
+		
+		return (this.modelMapper.map(biometricoModel, biometricoDtoResponse.class));
 	}
 	
 	@Transactional

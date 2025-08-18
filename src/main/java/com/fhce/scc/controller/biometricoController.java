@@ -33,10 +33,10 @@ public class biometricoController {
 		}
 	}
 	
-	@GetMapping("/listarCifCero")
+	@GetMapping("/getListarCifCero")
 	public ResponseEntity <List<biometricoDtoResponse>> listarCifCero(){
 		try {
-			return new ResponseEntity<>(this.biometricoService.listarCifCero(),HttpStatus.OK);
+			return new ResponseEntity<>(this.biometricoService.getListarCifCero(),HttpStatus.OK);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
@@ -82,6 +82,14 @@ public class biometricoController {
 	public ResponseEntity <biometricoDtoResponse> updateBiometrico(@RequestBody biometricoDtoResponse biometricoDtoResponse) {
 		try {
 			return new ResponseEntity<>(this.biometricoService.updateBiometrico(biometricoDtoResponse),HttpStatus.OK);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	@PutMapping("/updateBiometricoCif")
+	public ResponseEntity <biometricoDtoResponse> updateBiometricoCif(@RequestBody biometricoDtoResponse biometricoDtoResponse) {
+		try {
+			return new ResponseEntity<>(this.biometricoService.updateBiometricoCif(biometricoDtoResponse),HttpStatus.OK);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

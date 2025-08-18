@@ -7,7 +7,7 @@ import com.fhce.scc.obj.biometricoDtoResponse;
 
 public interface biometricoService {
 	List<biometricoDtoResponse> listar();
-	List<biometricoDtoResponse> listarCifCero();
+	List<biometricoDtoResponse> getListarCifCero();
 	List<biometricoDtoResponse> listarEgovf();
 	List<biometricoDtoResponse> listarBiometrico();
 	List<biometricoDtoResponse> listarBiometricoTipo(Long tipo);
@@ -16,4 +16,5 @@ public interface biometricoService {
 	biometricoDtoResponse estadoBiometrico(biometricoDtoResponse biometricoDtoResponse);
 	List<biometricoDtoResponse> updateTipo(Long cif, Long tipo);
 	List<biometricoDtoResponse> updateBiometricoTipo(biometricoDtoResponse biometricoDtoResponse);
+	biometricoDtoResponse updateBiometricoCif(biometricoDtoResponse biometricoDtoResponse);
 }
