@@ -1,6 +1,7 @@
 package com.fhce.scc.service.impl;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,7 +47,26 @@ public class horarioServiceImpl implements horarioService{
 		horarioModel horarioModel = this.modelMapper.map(horarioDtoRequest, horarioModel.class);
 		horarioModel aux = this.horarioDao.save(horarioModel);
 		
-		//actualizamos las fechas en el historial
+		//Actualizamos las fechas en el historial
+		
+		List<historialModel>antiguo = this.historialDao.getHistorial(horarioDtoRequest.getCif(), fecha.getYear());
+		
+		if(antiguo.size()>0) {
+			
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDate f = LocalDate.parse(horarioDtoRequest.getFecha(), formatter);
+	        LocalDate diaAnterior = f.minusDays(1);
+	        String resultado = diaAnterior.format(formatter);
+	        LocalDate newSalida = LocalDate.parse(resultado);
+			antiguo.get(antiguo.size()-1).setGestionsalida(newSalida.getYear());
+			antiguo.get(antiguo.size()-1).setMessalida(newSalida.getMonthValue());
+			antiguo.get(antiguo.size()-1).setDiasalida(newSalida.getDayOfMonth());
+			
+			this.historialDao.save(antiguo.get(antiguo.size()-1));
+			
+		}
+		
+		//creamos la nueva fecha 
 		historialModel historialModel = new historialModel();
 		historialModel.setCif(horarioDtoRequest.getCif());
 		historialModel.setHorario_id(aux.getId());
@@ -56,6 +76,8 @@ public class horarioServiceImpl implements horarioService{
 		historialModel.setGestionsalida(salida.getYear());
 		historialModel.setMessalida(salida.getMonthValue());
 		historialModel.setDiasalida(salida.getDayOfMonth());
+		
+		
 		
 		this.historialDao.save(historialModel);
 		
